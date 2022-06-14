@@ -1,6 +1,6 @@
 - 👋 Hi, I’m @sonofralph
 - 👀 I’m interested in python, kubernetes and DevOps as a whole
-- 🌱 I’m currently learning Python, Terraform and Kubernetes
+- 🌱 I’m currently learning Python, Terraform on Azure, Ansible and Kubernetes
 - 💞️ I’m looking to collaborate on ...
 - 📫 How to reach me ...
 
