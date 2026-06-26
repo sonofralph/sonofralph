@@ -1,6 +1,6 @@
 "use client";
 
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { Bell, LogOut, User, ChevronRight } from "lucide-react";
 import { signOut } from "next-auth/react";
 import { Button } from "@/components/ui/button";
@@ -21,20 +21,21 @@ interface HeaderProps {
 
 const routeLabels: Record<string, string> = {
   "/dashboard": "Dashboard",
-  "/dashboard/inventory": "Inventory",
-  "/dashboard/movements": "Stock Movements",
-  "/dashboard/purchase-orders": "Purchase Orders",
-  "/dashboard/purchase-orders/new": "New Purchase Order",
-  "/dashboard/suppliers": "Suppliers",
-  "/dashboard/locations": "Locations",
-  "/dashboard/alerts": "Alerts",
-  "/dashboard/reports": "Reports",
-  "/dashboard/settings": "Settings",
-  "/dashboard/settings/team": "Team Management",
+  "/inventory": "Inventory",
+  "/movements": "Stock Movements",
+  "/purchase-orders": "Purchase Orders",
+  "/purchase-orders/new": "New Purchase Order",
+  "/suppliers": "Suppliers",
+  "/locations": "Locations",
+  "/alerts": "Alerts",
+  "/reports": "Reports",
+  "/settings": "Settings",
+  "/settings/team": "Team Management",
 };
 
 export function Header({ user, alertCount = 0 }: HeaderProps) {
   const pathname = usePathname();
+  const router = useRouter();
   const pageTitle = routeLabels[pathname] ?? "Dashboard";
 
   const segments = pathname.split("/").filter(Boolean);
@@ -66,7 +67,7 @@ export function Header({ user, alertCount = 0 }: HeaderProps) {
       {/* Actions */}
       <div className="flex items-center gap-2">
         {/* Notifications */}
-        <Button variant="ghost" size="icon" className="relative">
+        <Button variant="ghost" size="icon" className="relative" onClick={() => router.push("/alerts")}>
           <Bell className="h-4 w-4" />
           {alertCount > 0 && (
             <span className="absolute -right-0.5 -top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white">
