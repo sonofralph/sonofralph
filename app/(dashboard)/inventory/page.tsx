@@ -21,6 +21,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { StockBadge } from "@/components/inventory/StockBadge";
 import { InventoryFilters } from "./InventoryFilters";
+import { ExportButton } from "@/components/ui/ExportButton";
 import Link from "next/link";
 
 interface InventoryPageProps {
@@ -94,6 +95,7 @@ export default async function InventoryPage({ searchParams }: InventoryPageProps
             {filteredRecords.length} records across {locations.length} locations
           </p>
         </div>
+        <ExportButton endpoint="/api/export/inventory" />
       </div>
 
       <InventoryFilters categories={categories} locations={locations} />

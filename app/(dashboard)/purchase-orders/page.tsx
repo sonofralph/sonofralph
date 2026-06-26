@@ -20,6 +20,8 @@ import { Button } from "@/components/ui/button";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import Link from "next/link";
 import { Plus, Eye } from "lucide-react";
+import { AutoGeneratePOButton } from "@/components/purchase-orders/AutoGeneratePOButton";
+import { ExportButton } from "@/components/ui/ExportButton";
 
 const statusVariant: Record<string, any> = {
   DRAFT: "secondary",
@@ -57,12 +59,16 @@ export default async function PurchaseOrdersPage() {
           </p>
         </div>
         {canCreate && (
-          <Link href="/dashboard/purchase-orders/new">
-            <Button>
-              <Plus className="mr-2 h-4 w-4" />
-              New PO
-            </Button>
-          </Link>
+          <div className="flex items-center gap-2">
+            <AutoGeneratePOButton />
+            <ExportButton endpoint="/api/export/movements" />
+            <Link href="/purchase-orders/new">
+              <Button>
+                <Plus className="mr-2 h-4 w-4" />
+                New PO
+              </Button>
+            </Link>
+          </div>
         )}
       </div>
 
