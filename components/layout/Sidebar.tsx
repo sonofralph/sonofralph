@@ -34,55 +34,55 @@ const navItems: NavItem[] = [
   },
   {
     label: "Inventory",
-    href: "/dashboard/inventory",
+    href: "/inventory",
     icon: Package,
     roles: ["OWNER", "ADMIN", "MANAGER", "STAFF"],
   },
   {
     label: "Stock Movements",
-    href: "/dashboard/movements",
+    href: "/movements",
     icon: ArrowLeftRight,
     roles: ["OWNER", "ADMIN", "MANAGER", "STAFF"],
   },
   {
     label: "Purchase Orders",
-    href: "/dashboard/purchase-orders",
+    href: "/purchase-orders",
     icon: ShoppingCart,
     roles: ["OWNER", "ADMIN", "MANAGER"],
   },
   {
     label: "Suppliers",
-    href: "/dashboard/suppliers",
+    href: "/suppliers",
     icon: Truck,
     roles: ["OWNER", "ADMIN", "MANAGER"],
   },
   {
     label: "Locations",
-    href: "/dashboard/locations",
+    href: "/locations",
     icon: MapPin,
     roles: ["OWNER", "ADMIN"],
   },
   {
     label: "Alerts",
-    href: "/dashboard/alerts",
+    href: "/alerts",
     icon: Bell,
     roles: ["OWNER", "ADMIN", "MANAGER"],
   },
   {
     label: "Reports",
-    href: "/dashboard/reports",
+    href: "/reports",
     icon: BarChart3,
     roles: ["OWNER", "ADMIN", "MANAGER"],
   },
   {
     label: "Team",
-    href: "/dashboard/settings/team",
+    href: "/settings/team",
     icon: Users,
     roles: ["OWNER", "ADMIN"],
   },
   {
     label: "Settings",
-    href: "/dashboard/settings",
+    href: "/settings",
     icon: Settings,
     roles: ["OWNER", "ADMIN"],
   },
@@ -119,7 +119,7 @@ export function Sidebar({ userRole, orgName }: SidebarProps) {
             const isActive =
               item.href === "/dashboard"
                 ? pathname === "/dashboard"
-                : pathname.startsWith(item.href);
+                : pathname === item.href || pathname.startsWith(item.href + "/");
 
             return (
               <li key={item.href}>
