@@ -1,0 +1,275 @@
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
+import { redirect } from "next/navigation";
+import { SessionUser } from "@/types";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { StockBadge } from "@/components/inventory/StockBadge";
+import { MovementAreaChart, CategoryPieChart } from "@/components/dashboard/DashboardCharts";
+import {
+  Package, AlertTriangle, ShoppingCart, MapPin,
+  TrendingDown, ArrowUpRight, ArrowDownRight,
+  RefreshCw, Settings, Trash2, TrendingUp,
+} from "lucide-react";
+import { formatDateTime } from "@/lib/utils";
+import Link from "next/link";
+import { cn } from "@/lib/utils";
+
+const movementTypeConfig: Record<string, { icon: React.ElementType; color: string; bg: string; label: string }> = {
+  RECEIPT:    { icon: ArrowUpRight,   color: "text-emerald-600", bg: "bg-emerald-50", label: "Receipt" },
+  ISSUE:      { icon: ArrowDownRight, color: "text-red-600",     bg: "bg-red-50",     label: "Issue" },
+  TRANSFER:   { icon: RefreshCw,      color: "text-blue-600",    bg: "bg-blue-50",    label: "Transfer" },
+  ADJUSTMENT: { icon: Settings,       color: "text-amber-600",   bg: "bg-amber-50",   label: "Adjustment" },
+  WASTAGE:    { icon: Trash2,         color: "text-slate-500",   bg: "bg-slate-50",   label: "Wastage" },
+};
+
+function getGreeting() {
+  const h = new Date().getHours();
+  if (h < 12) return "Good morning";
+  if (h < 17) return "Good afternoon";
+  return "Good evening";
+}
+
+export default async function DashboardPage() {
+  const session = await getServerSession(authOptions);
+  if (!session?.user) redirect("/login");
+
+  const user = session.user as SessionUser;
+  const orgId = user.organizationId;
+
+  const sevenDaysAgo = new Date();
+  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+
+  const [
+    totalItems, lowStockCount, pendingPOCount, locationCount,
+    recentMovements, criticalItems, categoryBreakdown, movementsLast7Days,
+  ] = await Promise.all([
+    prisma.item.count({ where: { organizationId: orgId } }),
+    prisma.$queryRaw<[{ count: bigint }]>`
+      SELECT COUNT(*) FROM "InventoryRecord" ir
+      JOIN "Item" i ON ir."itemId" = i.id
+      WHERE i."organizationId" = ${orgId}
+      AND ir.quantity <= ir."reorderPoint"
+    `.then((r) => Number(r[0].count)),
+    prisma.purchaseOrder.count({ where: { organizationId: orgId, status: { in: ["DRAFT", "SENT", "PARTIAL"] } } }),
+    prisma.location.count({ where: { organizationId: orgId } }),
+    prisma.stockMovement.findMany({
+      where: { item: { organizationId: orgId } },
+      orderBy: { createdAt: "desc" },
+      take: 8,
+      include: {
+        item: { select: { name: true, sku: true } },
+        location: { select: { name: true } },
+        user: { select: { name: true, email: true } },
+      },
+    }),
+    prisma.inventoryRecord.findMany({
+      where: { item: { organizationId: orgId } },
+      include: { item: { include: { category: true } }, location: true },
+      orderBy: { quantity: "asc" },
+      take: 6,
+    }),
+    prisma.category.findMany({
+      where: { organizationId: orgId },
+      include: { _count: { select: { items: true } } },
+      orderBy: { name: "asc" },
+    }),
+    prisma.stockMovement.findMany({
+      where: { item: { organizationId: orgId }, createdAt: { gte: sevenDaysAgo } },
+      select: { type: true, quantity: true, createdAt: true },
+    }),
+  ]);
+
+  const dayLabels = Array.from({ length: 7 }, (_, i) => {
+    const d = new Date();
+    d.setDate(d.getDate() - (6 - i));
+    return d.toLocaleDateString("en-US", { weekday: "short" });
+  });
+
+  const chartData = dayLabels.map((label, i) => {
+    const dayStart = new Date();
+    dayStart.setDate(dayStart.getDate() - (6 - i));
+    dayStart.setHours(0, 0, 0, 0);
+    const dayEnd = new Date(dayStart);
+    dayEnd.setHours(23, 59, 59, 999);
+    const dayMovements = movementsLast7Days.filter((m) => m.createdAt >= dayStart && m.createdAt <= dayEnd);
+    return {
+      date: label,
+      receipts: dayMovements.filter((m) => m.type === "RECEIPT").reduce((s, m) => s + m.quantity, 0),
+      issues: dayMovements.filter((m) => m.type === "ISSUE").reduce((s, m) => s + m.quantity, 0),
+      wastage: dayMovements.filter((m) => m.type === "WASTAGE").reduce((s, m) => s + m.quantity, 0),
+    };
+  });
+
+  const pieData = categoryBreakdown.filter((c) => c._count.items > 0).map((c) => ({ name: c.name, value: c._count.items }));
+
+  const kpiCards = [
+    { title: "Total Items",    value: totalItems,    description: "Tracked inventory items",  icon: Package,       color: "text-indigo-600", bg: "bg-indigo-50", trend: null,                                    href: "/inventory" },
+    { title: "Low Stock",      value: lowStockCount, description: "Need attention",            icon: AlertTriangle, color: "text-amber-600",  bg: "bg-amber-50",  trend: lowStockCount > 0 ? "warning" : "good", href: "/inventory?status=low" },
+    { title: "Pending Orders", value: pendingPOCount,description: "Awaiting delivery",         icon: ShoppingCart,  color: "text-blue-600",   bg: "bg-blue-50",   trend: null,                                    href: "/purchase-orders" },
+    { title: "Locations",      value: locationCount, description: "Active storage areas",      icon: MapPin,        color: "text-emerald-600",bg: "bg-emerald-50",trend: null,                                    href: "/locations" },
+  ];
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-slate-900">{getGreeting()}, {user.name?.split(" ")[0] ?? "there"}</h1>
+          <p className="mt-0.5 text-sm text-slate-500">Here&apos;s your inventory overview for today.</p>
+        </div>
+        <div className="hidden sm:flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2">
+          <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+          <span className="text-xs font-medium text-slate-600">Live</span>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+        {kpiCards.map((card) => {
+          const Icon = card.icon;
+          return (
+            <Link key={card.title} href={card.href}>
+              <Card className="hover:shadow-md transition-shadow cursor-pointer group">
+                <CardContent className="p-5">
+                  <div className="flex items-start justify-between">
+                    <div className={cn("flex h-10 w-10 items-center justify-center rounded-xl", card.bg)}>
+                      <Icon className={cn("h-5 w-5", card.color)} />
+                    </div>
+                    {card.trend === "warning" && (
+                      <span className="flex items-center gap-1 text-xs font-medium text-amber-600 bg-amber-50 rounded-full px-2 py-0.5">
+                        <TrendingUp className="h-3 w-3" />Alert
+                      </span>
+                    )}
+                    {card.trend === "good" && (
+                      <span className="flex items-center gap-1 text-xs font-medium text-emerald-600 bg-emerald-50 rounded-full px-2 py-0.5">Good</span>
+                    )}
+                  </div>
+                  <div className="mt-3">
+                    <p className="text-3xl font-bold text-slate-900 group-hover:text-indigo-600 transition-colors">
+                      {typeof card.value === "number" ? card.value.toLocaleString() : "—"}
+                    </p>
+                    <p className="mt-0.5 text-sm font-medium text-slate-600">{card.title}</p>
+                    <p className="text-xs text-slate-400">{card.description}</p>
+                  </div>
+                </CardContent>
+              </Card>
+            </Link>
+          );
+        })}
+      </div>
+
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+        <Card className="lg:col-span-2">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base">Stock Movement Trend</CardTitle>
+            <CardDescription>Receipts vs issues over the last 7 days</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <MovementAreaChart data={chartData} />
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base">Inventory by Category</CardTitle>
+            <CardDescription>Item distribution</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <CategoryPieChart data={pieData} />
+          </CardContent>
+        </Card>
+      </div>
+
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+        <Card className="lg:col-span-2">
+          <CardHeader className="flex flex-row items-center justify-between pb-3">
+            <div>
+              <CardTitle className="text-base">Recent Activity</CardTitle>
+              <CardDescription>Latest stock movements</CardDescription>
+            </div>
+            <Link href="/movements" className="text-xs font-medium text-indigo-600 hover:underline">View all</Link>
+          </CardHeader>
+          <CardContent className="p-0">
+            <Table>
+              <TableHeader>
+                <TableRow className="hover:bg-transparent">
+                  <TableHead className="pl-6">Item</TableHead>
+                  <TableHead>Type</TableHead>
+                  <TableHead>Qty</TableHead>
+                  <TableHead>Location</TableHead>
+                  <TableHead className="pr-6">When</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {recentMovements.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={5} className="text-center text-slate-400 py-10">No movements yet</TableCell>
+                  </TableRow>
+                ) : (
+                  recentMovements.map((m) => {
+                    const config = movementTypeConfig[m.type] ?? movementTypeConfig.RECEIPT;
+                    const Icon = config.icon;
+                    const isPositive = m.type === "RECEIPT";
+                    const isNegative = m.type === "ISSUE" || m.type === "WASTAGE";
+                    return (
+                      <TableRow key={m.id} className="hover:bg-slate-50/50">
+                        <TableCell className="pl-6">
+                          <div>
+                            <p className="font-medium text-slate-900 text-sm">{m.item.name}</p>
+                            <p className="text-xs text-slate-400">{m.item.sku}</p>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className={cn("inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium", config.bg, config.color)}>
+                            <Icon className="h-3 w-3" />{config.label}
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <span className={cn("text-sm font-semibold", isPositive ? "text-emerald-600" : isNegative ? "text-red-600" : "text-slate-700")}>
+                            {isPositive ? "+" : isNegative ? "-" : ""}{m.quantity}
+                          </span>
+                        </TableCell>
+                        <TableCell className="text-sm text-slate-500">{m.location.name}</TableCell>
+                        <TableCell className="text-xs text-slate-400 pr-6">{formatDateTime(m.createdAt)}</TableCell>
+                      </TableRow>
+                    );
+                  })
+                )}
+              </TableBody>
+            </Table>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between pb-3">
+            <div className="flex items-center gap-2">
+              <TrendingDown className="h-4 w-4 text-red-500" />
+              <CardTitle className="text-base">Critical Stock</CardTitle>
+            </div>
+            <Link href="/inventory?status=critical" className="text-xs font-medium text-indigo-600 hover:underline">View all</Link>
+          </CardHeader>
+          <CardContent className="space-y-2">
+            {criticalItems.length === 0 ? (
+              <div className="flex flex-col items-center gap-2 py-8 text-center">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-50">
+                  <Package className="h-5 w-5 text-emerald-600" />
+                </div>
+                <p className="text-sm font-medium text-slate-600">All stocked up</p>
+                <p className="text-xs text-slate-400">No critical items right now</p>
+              </div>
+            ) : (
+              criticalItems.map((record) => (
+                <div key={record.id} className="flex items-center justify-between gap-3 rounded-lg border border-slate-100 bg-slate-50/50 px-3 py-2.5">
+                  <div className="min-w-0">
+                    <p className="text-sm font-medium text-slate-900 truncate">{record.item.name}</p>
+                    <p className="text-xs text-slate-400">{record.location.name}</p>
+                  </div>
+                  <StockBadge quantity={record.quantity} reorderPoint={record.reorderPoint} minStock={record.minStock} unit={record.item.unit} showQty />
+                </div>
+              ))
+            )}
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  );
+}
