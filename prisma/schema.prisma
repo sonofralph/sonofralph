@@ -22,6 +22,8 @@ model Organization {
   suppliers      Supplier[]
   purchaseOrders PurchaseOrder[]
   alerts         Alert[]
+  recipes        Recipe[]
+  auditLogs      AuditLog[]
 }
 
 model User {
@@ -36,6 +38,7 @@ model User {
 
   organization Organization  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   movements    StockMovement[]
+  auditLogs    AuditLog[]
 }
 
 model Location {
@@ -69,30 +72,35 @@ model Item {
   sku            String
   description    String?
   unit           String
+  unitCost       Float    @default(0)
+  expiryDays     Int?
   organizationId String
   categoryId     String
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 
-  organization     Organization       @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  category         Category           @relation(fields: [categoryId], references: [id])
-  inventoryRecords InventoryRecord[]
-  movements        StockMovement[]
-  purchaseLines    PurchaseOrderLine[]
-  alerts           Alert[]
+  organization       Organization        @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  category           Category            @relation(fields: [categoryId], references: [id])
+  inventoryRecords   InventoryRecord[]
+  movements          StockMovement[]
+  purchaseLines      PurchaseOrderLine[]
+  alerts             Alert[]
+  recipeIngredients  RecipeIngredient[]
+  auditLogs          AuditLog[]
 
   @@unique([sku, organizationId])
 }
 
 model InventoryRecord {
-  id           String   @id @default(cuid())
+  id           String    @id @default(cuid())
   itemId       String
   locationId   String
-  quantity     Float    @default(0)
-  minStock     Float    @default(0)
-  maxStock     Float    @default(100)
-  reorderPoint Float    @default(10)
-  lastUpdated  DateTime @default(now())
+  quantity     Float     @default(0)
+  minStock     Float     @default(0)
+  maxStock     Float     @default(100)
+  reorderPoint Float     @default(10)
+  expiryDate   DateTime?
+  lastUpdated  DateTime  @default(now())
 
   item     Item     @relation(fields: [itemId], references: [id], onDelete: Cascade)
   location Location @relation(fields: [locationId], references: [id], onDelete: Cascade)
@@ -174,4 +182,48 @@ model Alert {
   organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   item         Item         @relation(fields: [itemId], references: [id])
   location     Location     @relation(fields: [locationId], references: [id])
+}
+
+model Recipe {
+  id                  String   @id @default(cuid())
+  name                String
+  description         String?
+  category            String?
+  servings            Float    @default(1)
+  sellingPrice        Float    @default(0)
+  targetCostPercent   Float    @default(30)
+  organizationId      String
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  organization Organization       @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  ingredients  RecipeIngredient[]
+}
+
+model RecipeIngredient {
+  id       String @id @default(cuid())
+  recipeId String
+  itemId   String
+  quantity Float
+  unit     String
+
+  recipe Recipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+  item   Item   @relation(fields: [itemId], references: [id])
+}
+
+model AuditLog {
+  id             String   @id @default(cuid())
+  organizationId String
+  userId         String
+  itemId         String?
+  action         String
+  entity         String
+  entityId       String
+  changes        String?
+  ipAddress      String?
+  createdAt      DateTime @default(now())
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  user         User         @relation(fields: [userId], references: [id])
+  item         Item?        @relation(fields: [itemId], references: [id])
 }

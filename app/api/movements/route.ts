@@ -144,6 +144,19 @@ export async function POST(req: Request) {
         }
       }
 
+      // Audit log
+      await prisma.auditLog.create({
+        data: {
+          organizationId: user.organizationId,
+          userId: user.id,
+          itemId: data.itemId,
+          action: "CREATE",
+          entity: "StockMovement",
+          entityId: movement.id,
+          changes: JSON.stringify({ type: data.type, quantity: data.quantity, locationId: data.locationId }),
+        },
+      });
+
       return movement;
     });
 

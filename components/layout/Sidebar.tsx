@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import {
   LayoutDashboard, Package, ArrowLeftRight, ShoppingCart,
   Truck, MapPin, Bell, BarChart3, Settings, Users, ChefHat,
+  UtensilsCrossed, Shield,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { UserRole } from "@/types";
@@ -22,9 +23,11 @@ const navItems: NavItem[] = [
   { label: "Stock Movements", href: "/movements",       icon: ArrowLeftRight,  roles: ["OWNER", "ADMIN", "MANAGER", "STAFF"] },
   { label: "Purchase Orders", href: "/purchase-orders", icon: ShoppingCart,    roles: ["OWNER", "ADMIN", "MANAGER"] },
   { label: "Suppliers",       href: "/suppliers",       icon: Truck,           roles: ["OWNER", "ADMIN", "MANAGER"] },
+  { label: "Recipes",         href: "/recipes",         icon: UtensilsCrossed, roles: ["OWNER", "ADMIN", "MANAGER"] },
   { label: "Locations",       href: "/locations",       icon: MapPin,          roles: ["OWNER", "ADMIN"] },
   { label: "Alerts",          href: "/alerts",          icon: Bell,            roles: ["OWNER", "ADMIN", "MANAGER"] },
   { label: "Reports",         href: "/reports",         icon: BarChart3,       roles: ["OWNER", "ADMIN", "MANAGER"] },
+  { label: "Audit Log",       href: "/audit",           icon: Shield,          roles: ["OWNER", "ADMIN"] },
   { label: "Team",            href: "/settings/team",   icon: Users,           roles: ["OWNER", "ADMIN"] },
   { label: "Settings",        href: "/settings",        icon: Settings,        roles: ["OWNER", "ADMIN"] },
 ];
@@ -32,8 +35,8 @@ const navItems: NavItem[] = [
 const navGroups = [
   { label: "Operations", keys: ["Dashboard", "Inventory", "Stock Movements"] },
   { label: "Procurement", keys: ["Purchase Orders", "Suppliers"] },
-  { label: "Management", keys: ["Locations", "Alerts", "Reports"] },
-  { label: "Admin", keys: ["Team", "Settings"] },
+  { label: "Management", keys: ["Recipes", "Locations", "Alerts", "Reports"] },
+  { label: "Admin", keys: ["Audit Log", "Team", "Settings"] },
 ];
 
 interface SidebarProps {
