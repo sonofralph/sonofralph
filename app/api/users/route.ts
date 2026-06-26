@@ -5,13 +5,14 @@ import { prisma } from "@/lib/prisma";
 import { SessionUser } from "@/types";
 import { z } from "zod";
 import bcrypt from "bcryptjs";
-import { UserRole } from "@prisma/client";
+
+const USER_ROLES = ["OWNER", "ADMIN", "MANAGER", "STAFF"] as const;
 
 const userSchema = z.object({
   name: z.string().min(1),
   email: z.string().email(),
   password: z.string().min(8),
-  role: z.nativeEnum(UserRole).default("STAFF"),
+  role: z.enum(USER_ROLES).default("STAFF"),
 });
 
 export async function POST(req: Request) {

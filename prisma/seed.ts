@@ -1,7 +1,11 @@
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
 
-const prisma = new PrismaClient();
+const prisma = new PrismaClient({
+  adapter: new (require("@prisma/adapter-pg").PrismaPg)({
+    connectionString: process.env.DATABASE_URL ?? "postgresql://stockwise:stockwise123@localhost:5432/stockwise",
+  }),
+});
 
 async function main() {
   console.log("Seeding database...");

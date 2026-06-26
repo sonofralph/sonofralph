@@ -12,7 +12,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Search, X } from "lucide-react";
 import { useCallback, useTransition } from "react";
-import { Category, Location } from "@prisma/client";
+import { Category, Location } from "@/types";
 
 interface InventoryFiltersProps {
   categories: Category[];

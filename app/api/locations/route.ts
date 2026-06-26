@@ -4,11 +4,12 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { SessionUser } from "@/types";
 import { z } from "zod";
-import { LocationType } from "@prisma/client";
+
+const LOCATION_TYPES = ["HOTEL", "RESTAURANT", "BAR", "KITCHEN", "WAREHOUSE", "EVENT_SPACE"] as const;
 
 const locationSchema = z.object({
   name: z.string().min(1),
-  type: z.nativeEnum(LocationType),
+  type: z.enum(LOCATION_TYPES),
 });
 
 export async function GET(req: Request) {

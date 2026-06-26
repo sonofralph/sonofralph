@@ -21,7 +21,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Plus } from "lucide-react";
-import type { LocationType } from "@prisma/client";
+import type { LocationType } from "@/types";
 
 const locationTypes: { value: LocationType; label: string }[] = [
   { value: "HOTEL", label: "Hotel" },

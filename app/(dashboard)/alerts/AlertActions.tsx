@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import type { AlertStatus } from "@prisma/client";
+import type { AlertStatus } from "@/types";
 
 interface AlertActionsProps {
   alertId: string;

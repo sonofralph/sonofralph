@@ -13,7 +13,7 @@ import {
   Clock,
   CheckCircle2,
 } from "lucide-react";
-import type { AlertType } from "@prisma/client";
+import type { AlertType } from "@/types";
 
 const alertTypeIcons: Record<AlertType, React.ElementType> = {
   LOW_STOCK: AlertTriangle,

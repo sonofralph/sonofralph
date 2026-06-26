@@ -16,7 +16,7 @@ import {
   ChefHat,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { UserRole } from "@prisma/client";
+import { UserRole } from "@/types";
 
 interface NavItem {
   label: string;

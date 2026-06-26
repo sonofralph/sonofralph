@@ -16,7 +16,7 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Plus, Trash2 } from "lucide-react";
 import { formatCurrency } from "@/lib/utils";
-import type { Supplier, Item, Category } from "@prisma/client";
+import type { Supplier, Item, Category } from "@/types";
 
 interface POLine {
   itemId: string;

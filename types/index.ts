@@ -10,13 +10,6 @@ import {
   PurchaseOrder,
   PurchaseOrderLine,
   Alert,
-  UserRole,
-  LocationType,
-  MovementType,
-  POStatus,
-  AlertType,
-  AlertStatus,
-  Plan,
 } from "@prisma/client";
 
 export type {
@@ -31,14 +24,15 @@ export type {
   PurchaseOrder,
   PurchaseOrderLine,
   Alert,
-  UserRole,
-  LocationType,
-  MovementType,
-  POStatus,
-  AlertType,
-  AlertStatus,
-  Plan,
 };
+
+export type UserRole = "OWNER" | "ADMIN" | "MANAGER" | "STAFF";
+export type LocationType = "HOTEL" | "RESTAURANT" | "BAR" | "KITCHEN" | "WAREHOUSE" | "EVENT_SPACE";
+export type MovementType = "RECEIPT" | "ISSUE" | "TRANSFER" | "ADJUSTMENT" | "WASTAGE";
+export type POStatus = "DRAFT" | "SENT" | "PARTIAL" | "RECEIVED" | "CANCELLED";
+export type AlertType = "LOW_STOCK" | "OUT_OF_STOCK" | "EXPIRY";
+export type AlertStatus = "OPEN" | "ACKNOWLEDGED" | "RESOLVED";
+export type Plan = "FREE" | "PRO" | "ENTERPRISE";
 
 export type InventoryWithRelations = InventoryRecord & {
   item: Item & { category: Category };

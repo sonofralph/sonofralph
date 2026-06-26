@@ -4,10 +4,11 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { SessionUser } from "@/types";
 import { z } from "zod";
-import { AlertStatus } from "@prisma/client";
+
+const ALERT_STATUSES = ["OPEN", "ACKNOWLEDGED", "RESOLVED"] as const;
 
 const patchSchema = z.object({
-  status: z.nativeEnum(AlertStatus),
+  status: z.enum(ALERT_STATUSES),
 });
 
 export async function PATCH(

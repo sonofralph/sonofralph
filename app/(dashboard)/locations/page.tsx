@@ -15,7 +15,7 @@ import {
   Calendar,
   MapPin,
 } from "lucide-react";
-import type { LocationType } from "@prisma/client";
+import type { LocationType } from "@/types";
 
 const locationIcons: Record<LocationType, React.ElementType> = {
   HOTEL: Hotel,

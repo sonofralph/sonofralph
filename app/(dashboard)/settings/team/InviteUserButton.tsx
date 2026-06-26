@@ -21,7 +21,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { UserPlus } from "lucide-react";
-import type { UserRole } from "@prisma/client";
+import type { UserRole } from "@/types";
 
 export function InviteUserButton() {
   const router = useRouter();

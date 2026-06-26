@@ -4,12 +4,13 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { z } from "zod";
 import { SessionUser } from "@/types";
-import { MovementType } from "@prisma/client";
+
+const MOVEMENT_TYPES = ["RECEIPT", "ISSUE", "TRANSFER", "ADJUSTMENT", "WASTAGE"] as const;
 
 const movementSchema = z.object({
   itemId: z.string().min(1),
   locationId: z.string().min(1),
-  type: z.nativeEnum(MovementType),
+  type: z.enum(MOVEMENT_TYPES),
   quantity: z.number().positive(),
   reference: z.string().optional(),
   notes: z.string().optional(),

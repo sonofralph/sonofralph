@@ -14,12 +14,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { MovementType } from "@prisma/client";
+import { MovementType } from "@/types";
+
+const MOVEMENT_TYPES = ["RECEIPT", "ISSUE", "TRANSFER", "ADJUSTMENT", "WASTAGE"] as const;
 
 const movementSchema = z.object({
   itemId: z.string().min(1, "Item is required"),
   locationId: z.string().min(1, "Location is required"),
-  type: z.nativeEnum(MovementType),
+  type: z.enum(MOVEMENT_TYPES),
   quantity: z.number().positive("Quantity must be positive"),
   reference: z.string().optional(),
   notes: z.string().optional(),
