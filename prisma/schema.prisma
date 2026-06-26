@@ -1,0 +1,232 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Plan {
+  FREE
+  PRO
+  ENTERPRISE
+}
+
+enum DeploymentMode {
+  SAAS
+  SELF_HOSTED
+}
+
+enum UserRole {
+  OWNER
+  ADMIN
+  MANAGER
+  STAFF
+}
+
+enum LocationType {
+  HOTEL
+  RESTAURANT
+  BAR
+  KITCHEN
+  WAREHOUSE
+  EVENT_SPACE
+}
+
+enum MovementType {
+  RECEIPT
+  ISSUE
+  TRANSFER
+  ADJUSTMENT
+  WASTAGE
+}
+
+enum POStatus {
+  DRAFT
+  SENT
+  PARTIAL
+  RECEIVED
+  CANCELLED
+}
+
+enum AlertType {
+  LOW_STOCK
+  OUT_OF_STOCK
+  EXPIRY
+}
+
+enum AlertStatus {
+  OPEN
+  ACKNOWLEDGED
+  RESOLVED
+}
+
+model Organization {
+  id             String         @id @default(cuid())
+  name           String
+  slug           String         @unique
+  plan           Plan           @default(FREE)
+  deploymentMode DeploymentMode @default(SAAS)
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+
+  users          User[]
+  locations      Location[]
+  categories     Category[]
+  items          Item[]
+  suppliers      Supplier[]
+  purchaseOrders PurchaseOrder[]
+  alerts         Alert[]
+}
+
+model User {
+  id             String   @id @default(cuid())
+  email          String   @unique
+  name           String?
+  passwordHash   String?
+  role           UserRole @default(STAFF)
+  organizationId String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  organization Organization  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  movements    StockMovement[]
+}
+
+model Location {
+  id             String       @id @default(cuid())
+  name           String
+  type           LocationType
+  organizationId String
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  organization     Organization    @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  inventoryRecords InventoryRecord[]
+  movements        StockMovement[]
+  alerts           Alert[]
+}
+
+model Category {
+  id             String   @id @default(cuid())
+  name           String
+  organizationId String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  items        Item[]
+}
+
+model Item {
+  id             String   @id @default(cuid())
+  name           String
+  sku            String
+  description    String?
+  unit           String
+  organizationId String
+  categoryId     String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  organization     Organization       @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  category         Category           @relation(fields: [categoryId], references: [id])
+  inventoryRecords InventoryRecord[]
+  movements        StockMovement[]
+  purchaseLines    PurchaseOrderLine[]
+  alerts           Alert[]
+
+  @@unique([sku, organizationId])
+}
+
+model InventoryRecord {
+  id           String   @id @default(cuid())
+  itemId       String
+  locationId   String
+  quantity     Float    @default(0)
+  minStock     Float    @default(0)
+  maxStock     Float    @default(100)
+  reorderPoint Float    @default(10)
+  lastUpdated  DateTime @default(now())
+
+  item     Item     @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  location Location @relation(fields: [locationId], references: [id], onDelete: Cascade)
+
+  @@unique([itemId, locationId])
+}
+
+model StockMovement {
+  id         String       @id @default(cuid())
+  itemId     String
+  locationId String
+  type       MovementType
+  quantity   Float
+  reference  String?
+  notes      String?
+  userId     String
+  createdAt  DateTime     @default(now())
+
+  item     Item     @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  location Location @relation(fields: [locationId], references: [id], onDelete: Cascade)
+  user     User     @relation(fields: [userId], references: [id])
+}
+
+model Supplier {
+  id             String   @id @default(cuid())
+  name           String
+  contact        String?
+  email          String?
+  phone          String?
+  address        String?
+  organizationId String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  organization   Organization    @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  purchaseOrders PurchaseOrder[]
+}
+
+model PurchaseOrder {
+  id             String    @id @default(cuid())
+  supplierId     String
+  organizationId String
+  status         POStatus  @default(DRAFT)
+  totalAmount    Float     @default(0)
+  notes          String?
+  orderDate      DateTime  @default(now())
+  expectedDate   DateTime?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  supplier     Supplier           @relation(fields: [supplierId], references: [id])
+  organization Organization       @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  lines        PurchaseOrderLine[]
+}
+
+model PurchaseOrderLine {
+  id              String @id @default(cuid())
+  purchaseOrderId String
+  itemId          String
+  quantity        Float
+  unitCost        Float
+  receivedQty     Float  @default(0)
+
+  purchaseOrder PurchaseOrder @relation(fields: [purchaseOrderId], references: [id], onDelete: Cascade)
+  item          Item          @relation(fields: [itemId], references: [id])
+}
+
+model Alert {
+  id             String      @id @default(cuid())
+  organizationId String
+  itemId         String
+  locationId     String
+  type           AlertType
+  status         AlertStatus @default(OPEN)
+  message        String?
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  item         Item         @relation(fields: [itemId], references: [id])
+  location     Location     @relation(fields: [locationId], references: [id])
+}
