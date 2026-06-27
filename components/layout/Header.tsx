@@ -47,6 +47,7 @@ const routeLabels: Record<string, string> = {
   "/recipes": "Recipes & Food Cost",
   "/recipes/new": "New Recipe",
   "/audit": "Audit Log",
+  "/reorder": "Reorder Suggestions",
 };
 
 export function Header({ user, alertCount = 0, alerts = [], onMenuToggle }: HeaderProps) {
