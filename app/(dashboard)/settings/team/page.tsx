@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { InviteUserButton } from "./InviteUserButton";
+import { MemberActions } from "./MemberActions";
 import { formatDate } from "@/lib/utils";
 import { User } from "lucide-react";
 
@@ -67,6 +68,7 @@ export default async function TeamPage() {
                 <TableHead>Email</TableHead>
                 <TableHead>Role</TableHead>
                 <TableHead>Joined</TableHead>
+                <TableHead></TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -78,25 +80,26 @@ export default async function TeamPage() {
                         <User className="h-4 w-4 text-indigo-600" />
                       </div>
                       <div>
-                        <p className="font-medium text-slate-900">
-                          {member.name ?? "—"}
-                        </p>
+                        <p className="font-medium text-slate-900">{member.name ?? "—"}</p>
                         {member.id === user.id && (
                           <span className="text-xs text-indigo-600">(you)</span>
                         )}
                       </div>
                     </div>
                   </TableCell>
-                  <TableCell className="text-sm text-slate-600">
-                    {member.email}
-                  </TableCell>
+                  <TableCell className="text-sm text-slate-600">{member.email}</TableCell>
                   <TableCell>
-                    <Badge variant={roleColors[member.role] ?? "secondary"}>
-                      {member.role}
-                    </Badge>
+                    <Badge variant={roleColors[member.role] ?? "secondary"}>{member.role}</Badge>
                   </TableCell>
-                  <TableCell className="text-sm text-slate-500">
-                    {formatDate(member.createdAt)}
+                  <TableCell className="text-sm text-slate-500">{formatDate(member.createdAt)}</TableCell>
+                  <TableCell>
+                    <MemberActions
+                      memberId={member.id}
+                      currentRole={member.role as any}
+                      actorRole={user.role as any}
+                      isSelf={member.id === user.id}
+                      isOwner={member.role === "OWNER"}
+                    />
                   </TableCell>
                 </TableRow>
               ))}
