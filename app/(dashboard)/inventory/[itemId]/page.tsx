@@ -8,6 +8,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge";
 import { StockBadge } from "@/components/inventory/StockBadge";
 import { EditItemForm } from "./EditItemForm";
+import { StockAdjustButton } from "./StockAdjustModal";
 import { formatDateTime, formatCurrency } from "@/lib/utils";
 import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
@@ -79,9 +80,23 @@ export default async function ItemDetailPage({
             </div>
             {item.description && <p className="mt-2 text-sm text-slate-500">{item.description}</p>}
           </div>
-          <div className="text-right shrink-0 ml-4">
-            <p className="text-3xl font-bold text-slate-900">{totalQty.toLocaleString()}</p>
-            <p className="text-xs text-slate-500">total {item.unit} in stock</p>
+          <div className="text-right shrink-0 ml-4 flex flex-col items-end gap-2">
+            <div>
+              <p className="text-3xl font-bold text-slate-900">{totalQty.toLocaleString()}</p>
+              <p className="text-xs text-slate-500">total {item.unit} in stock</p>
+            </div>
+            {canEdit && (
+              <StockAdjustButton
+                itemId={itemId}
+                itemName={item.name}
+                unit={item.unit}
+                locations={item.inventoryRecords.map((r) => ({
+                  id: r.locationId,
+                  name: r.location.name,
+                  currentQty: r.quantity,
+                }))}
+              />
+            )}
           </div>
         </div>
       </div>
