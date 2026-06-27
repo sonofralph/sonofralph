@@ -2,6 +2,7 @@
 
 import { usePathname, useRouter } from "next/navigation";
 import { Bell, LogOut, User, ChevronRight, AlertTriangle, Package, Menu } from "lucide-react";
+import { GlobalSearch } from "@/components/GlobalSearch";
 import { signOut } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 import {
@@ -86,6 +87,7 @@ export function Header({ user, alertCount = 0, alerts = [], onMenuToggle }: Head
 
       {/* Actions */}
       <div className="flex items-center gap-2">
+        <GlobalSearch />
         {/* Notifications dropdown */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
