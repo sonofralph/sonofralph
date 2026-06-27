@@ -129,7 +129,7 @@ export default async function InventoryPage({ searchParams }: InventoryPageProps
                   <TableRow key={record.id}>
                     <TableCell>
                       <Link
-                        href={`/dashboard/inventory/${record.itemId}`}
+                        href={`/inventory/${record.itemId}`}
                         className="font-medium text-slate-900 hover:text-indigo-600 transition-colors"
                       >
                         {record.item.name}
