@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import {
   LayoutDashboard, Package, ArrowLeftRight, ShoppingCart,
   Truck, MapPin, Bell, BarChart3, Settings, Users, ChefHat,
-  UtensilsCrossed, Shield,
+  UtensilsCrossed, Shield, X,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { UserRole } from "@/types";
@@ -42,9 +42,10 @@ const navGroups = [
 interface SidebarProps {
   userRole: UserRole;
   orgName: string;
+  onClose?: () => void;
 }
 
-export function Sidebar({ userRole, orgName }: SidebarProps) {
+export function Sidebar({ userRole, orgName, onClose }: SidebarProps) {
   const pathname = usePathname();
   const visibleItems = navItems.filter((item) => item.roles.includes(userRole));
 
@@ -52,6 +53,11 @@ export function Sidebar({ userRole, orgName }: SidebarProps) {
     <aside className="flex h-full w-60 flex-col border-r border-slate-100 bg-white">
       {/* Logo */}
       <div className="flex h-16 items-center gap-3 border-b border-slate-100 px-5">
+        {onClose && (
+          <button onClick={onClose} className="md:hidden mr-1 rounded-lg p-1 hover:bg-slate-100">
+            <X className="h-4 w-4 text-slate-500" />
+          </button>
+        )}
         <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-600 shadow-sm">
           <ChefHat className="h-4 w-4 text-white" />
         </div>

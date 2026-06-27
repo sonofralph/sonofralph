@@ -1,7 +1,7 @@
 "use client";
 
 import { usePathname, useRouter } from "next/navigation";
-import { Bell, LogOut, User, ChevronRight, AlertTriangle, Package } from "lucide-react";
+import { Bell, LogOut, User, ChevronRight, AlertTriangle, Package, Menu } from "lucide-react";
 import { signOut } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 import {
@@ -28,6 +28,7 @@ interface HeaderProps {
   user: SessionUser;
   alertCount?: number;
   alerts?: AlertPreview[];
+  onMenuToggle?: () => void;
 }
 
 const routeLabels: Record<string, string> = {
@@ -47,7 +48,7 @@ const routeLabels: Record<string, string> = {
   "/audit": "Audit Log",
 };
 
-export function Header({ user, alertCount = 0, alerts = [] }: HeaderProps) {
+export function Header({ user, alertCount = 0, alerts = [], onMenuToggle }: HeaderProps) {
   const pathname = usePathname();
   const router = useRouter();
 
@@ -58,7 +59,12 @@ export function Header({ user, alertCount = 0, alerts = [] }: HeaderProps) {
   });
 
   return (
-    <header className="flex h-16 items-center justify-between border-b border-slate-200 bg-white px-6">
+    <header className="flex h-16 items-center justify-between border-b border-slate-200 bg-white px-4 md:px-6">
+      <div className="flex items-center gap-3">
+        {/* Hamburger — mobile only */}
+        <button onClick={onMenuToggle} className="md:hidden rounded-lg p-1.5 hover:bg-slate-100">
+          <Menu className="h-5 w-5 text-slate-600" />
+        </button>
       {/* Breadcrumb */}
       <div className="flex items-center gap-1 text-sm">
         {breadcrumbs.map((crumb, i) => (
@@ -75,6 +81,7 @@ export function Header({ user, alertCount = 0, alerts = [] }: HeaderProps) {
             </span>
           </div>
         ))}
+      </div>
       </div>
 
       {/* Actions */}
