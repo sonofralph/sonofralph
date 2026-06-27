@@ -86,9 +86,9 @@ export default async function AlertsPage() {
           </div>
         ) : (
           openAlerts.map((alert) => {
-            const Icon = alertTypeIcons[alert.type] ?? AlertTriangle;
+            const Icon = alertTypeIcons[alert.type as AlertType] ?? AlertTriangle;
             const colorClass =
-              alertTypeColors[alert.type] ?? "text-slate-600 bg-slate-50";
+              alertTypeColors[alert.type as AlertType] ?? "text-slate-600 bg-slate-50";
 
             return (
               <div
@@ -106,7 +106,7 @@ export default async function AlertsPage() {
                     <p className="font-medium text-slate-900">
                       {alert.item.name}
                     </p>
-                    <Badge variant={alertTypeBadge[alert.type]}>
+                    <Badge variant={alertTypeBadge[alert.type as AlertType]}>
                       {alert.type.replace("_", " ")}
                     </Badge>
                     {alert.status === "ACKNOWLEDGED" && (
