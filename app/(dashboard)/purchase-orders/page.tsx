@@ -97,7 +97,7 @@ export default async function PurchaseOrdersPage() {
                     No purchase orders yet.{" "}
                     {canCreate && (
                       <Link
-                        href="/dashboard/purchase-orders/new"
+                        href="/purchase-orders/new"
                         className="text-indigo-600 hover:underline"
                       >
                         Create your first PO
@@ -140,7 +140,7 @@ export default async function PurchaseOrdersPage() {
                         {po.expectedDate ? formatDate(po.expectedDate) : "—"}
                       </TableCell>
                       <TableCell>
-                        <Link href={`/dashboard/purchase-orders/${po.id}`}>
+                        <Link href={`/purchase-orders/${po.id}`}>
                           <Button variant="ghost" size="icon">
                             <Eye className="h-4 w-4" />
                           </Button>
