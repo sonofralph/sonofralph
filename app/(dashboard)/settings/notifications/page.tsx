@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { SessionUser } from "@/types";
 import { Bell } from "lucide-react";
 import { NotificationPreferencesForm } from "./NotificationPreferencesForm";
+import { DigestButton } from "./DigestButton";
 
 const ALERT_TYPES = ["LOW_STOCK", "OUT_OF_STOCK", "EXPIRY"];
 
@@ -36,6 +37,14 @@ export default async function NotificationSettingsPage() {
       </div>
 
       <NotificationPreferencesForm initialPrefs={prefs} />
+
+      <div className="rounded-xl border border-slate-200 bg-white px-5 py-4 flex items-center justify-between">
+        <div>
+          <p className="text-sm font-semibold text-slate-900">Weekly Digest</p>
+          <p className="text-sm text-slate-500">Sent every Monday to all admins</p>
+        </div>
+        <DigestButton />
+      </div>
 
       <p className="text-xs text-slate-400">
         Alert emails are sent to <span className="font-medium text-slate-600">{user.email}</span>

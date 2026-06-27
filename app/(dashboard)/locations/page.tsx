@@ -6,6 +6,7 @@ import { SessionUser } from "@/types";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { AddLocationButton } from "./AddLocationButton";
+import Link from "next/link";
 import {
   Hotel,
   UtensilsCrossed,
@@ -81,10 +82,8 @@ export default async function LocationsPage() {
             const colorClass = (locationColors as any)[location.type] ?? "bg-slate-50 text-slate-600";
 
             return (
-              <Card
-                key={location.id}
-                className="hover:shadow-md transition-shadow"
-              >
+              <Link key={location.id} href={`/locations/${location.id}`}>
+              <Card className="hover:shadow-md transition-shadow cursor-pointer group">
                 <CardContent className="p-5">
                   <div className="flex items-start gap-3">
                     <div
@@ -120,6 +119,7 @@ export default async function LocationsPage() {
                   </div>
                 </CardContent>
               </Card>
+              </Link>
             );
           })
         )}
