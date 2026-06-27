@@ -191,6 +191,11 @@ export function Header({ user, alertCount = 0, alerts = [], onMenuToggle }: Head
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={() => router.push("/settings/profile")}>
+              <User className="mr-2 h-4 w-4" />
+              Your Profile
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
             <DropdownMenuItem
               className="text-red-600 focus:text-red-600"
               onClick={() => signOut({ callbackUrl: "/login" })}
