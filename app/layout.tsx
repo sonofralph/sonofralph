@@ -6,14 +6,14 @@ import { Providers } from "./providers";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Stockwise — Hospitality Inventory Management",
+  title: "Mise — Hospitality Inventory Management",
   description:
     "Multi-tenant inventory management system for hotels, restaurants, and hospitality businesses.",
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "Stockwise",
+    title: "Mise",
   },
   formatDetection: { telephone: false },
 };

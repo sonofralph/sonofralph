@@ -4,10 +4,10 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import {
   MapPin, Package, CheckCircle2, ArrowRight, Loader2, Plus, Trash2, ChefHat,
+  UtensilsCrossed, Hotel, Wine, Coffee, Truck, Stethoscope,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 
 interface Props {
@@ -16,28 +16,95 @@ interface Props {
   hasItems: boolean;
 }
 
-const LOCATION_TYPES = ["KITCHEN", "BAR", "STORAGE", "CELLAR", "FREEZER", "OTHER"] as const;
+const BUSINESS_TYPES = [
+  {
+    key: "RESTAURANT",
+    label: "Restaurant",
+    description: "Full-service or casual dining",
+    icon: UtensilsCrossed,
+    presets: [
+      { name: "Main Kitchen", type: "KITCHEN" },
+      { name: "Bar", type: "BAR" },
+      { name: "Dry Store", type: "STORAGE" },
+      { name: "Walk-in Freezer", type: "FREEZER" },
+    ],
+  },
+  {
+    key: "HOTEL",
+    label: "Hotel",
+    description: "Full-service hotel or resort",
+    icon: Hotel,
+    presets: [
+      { name: "Main Kitchen", type: "KITCHEN" },
+      { name: "Bar & Lounge", type: "BAR" },
+      { name: "Housekeeping Store", type: "STORAGE" },
+      { name: "Events & Banqueting", type: "OTHER" },
+    ],
+  },
+  {
+    key: "BAR",
+    label: "Bar / Nightclub",
+    description: "Bar, pub, or nightclub",
+    icon: Wine,
+    presets: [
+      { name: "Back Bar", type: "BAR" },
+      { name: "Cellar", type: "CELLAR" },
+      { name: "Storage", type: "STORAGE" },
+    ],
+  },
+  {
+    key: "CAFE",
+    label: "Café",
+    description: "Coffee shop or café",
+    icon: Coffee,
+    presets: [
+      { name: "Kitchen", type: "KITCHEN" },
+      { name: "Front of House", type: "OTHER" },
+      { name: "Storage", type: "STORAGE" },
+    ],
+  },
+  {
+    key: "CATERING",
+    label: "Catering / Events",
+    description: "Catering company or event venue",
+    icon: Truck,
+    presets: [
+      { name: "Central Kitchen", type: "KITCHEN" },
+      { name: "Event Store", type: "STORAGE" },
+      { name: "Cold Store", type: "FREEZER" },
+    ],
+  },
+  {
+    key: "CLINIC",
+    label: "Clinic / Hospital",
+    description: "Medical facility or pharmacy",
+    icon: Stethoscope,
+    presets: [
+      { name: "Pharmacy", type: "STORAGE" },
+      { name: "Main Store", type: "STORAGE" },
+      { name: "Ward Store", type: "OTHER" },
+    ],
+  },
+] as const;
 
-const LOCATION_PRESETS = [
-  { name: "Main Kitchen", type: "KITCHEN" },
-  { name: "Bar", type: "BAR" },
-  { name: "Dry Store", type: "STORAGE" },
-  { name: "Walk-in Freezer", type: "FREEZER" },
-];
+const LOCATION_TYPES = ["KITCHEN", "BAR", "STORAGE", "CELLAR", "FREEZER", "OTHER"] as const;
+const ITEM_UNITS = ["kg", "g", "litre", "ml", "each", "bottle", "case", "box", "portion"];
 
 interface LocationDraft { name: string; type: string }
 interface ItemDraft { name: string; sku: string; unit: string; category: string; unitCost: string }
 
-const ITEM_UNITS = ["kg", "g", "litre", "ml", "each", "bottle", "case", "box", "portion"];
-
 export function OnboardingWizard({ orgName, hasLocations, hasItems }: Props) {
   const router = useRouter();
-  const initialStep = hasLocations ? 2 : 1;
+  const initialStep = hasLocations ? 2 : 0;
   const [step, setStep] = useState(initialStep);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
+  // Step 0 — Business type
+  const [businessType, setBusinessType] = useState<string>("");
+
   // Step 1 — Locations
+  const selectedBiz = BUSINESS_TYPES.find((b) => b.key === businessType) ?? BUSINESS_TYPES[0];
   const [locations, setLocations] = useState<LocationDraft[]>([{ name: "", type: "KITCHEN" }]);
 
   // Step 2 — Items
@@ -45,7 +112,6 @@ export function OnboardingWizard({ orgName, hasLocations, hasItems }: Props) {
     { name: "", sku: "", unit: "kg", category: "General", unitCost: "" },
   ]);
 
-  // --- Location helpers ---
   const addLocation = () => setLocations([...locations, { name: "", type: "STORAGE" }]);
   const removeLocation = (i: number) => setLocations(locations.filter((_, idx) => idx !== i));
   const updateLocation = (i: number, field: keyof LocationDraft, value: string) => {
@@ -53,13 +119,12 @@ export function OnboardingWizard({ orgName, hasLocations, hasItems }: Props) {
     updated[i] = { ...updated[i], [field]: value };
     setLocations(updated);
   };
-  const applyPreset = (preset: typeof LOCATION_PRESETS[number]) => {
+  const applyPreset = (preset: { name: string; type: string }) => {
     if (!locations.some((l) => l.name === preset.name)) {
       setLocations([...locations.filter((l) => l.name), { name: preset.name, type: preset.type }]);
     }
   };
 
-  // --- Item helpers ---
   const addItem = () => setItems([...items, { name: "", sku: "", unit: "kg", category: "General", unitCost: "" }]);
   const removeItem = (i: number) => setItems(items.filter((_, idx) => idx !== i));
   const updateItem = (i: number, field: keyof ItemDraft, value: string) => {
@@ -67,6 +132,19 @@ export function OnboardingWizard({ orgName, hasLocations, hasItems }: Props) {
     updated[i] = { ...updated[i], [field]: value };
     setItems(updated);
   };
+
+  async function submitBusinessType() {
+    if (!businessType) { setError("Please select your business type"); return; }
+    setLoading(true);
+    setError("");
+    await fetch("/api/onboarding/business-type", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ businessType }),
+    });
+    setLoading(false);
+    setStep(1);
+  }
 
   async function submitLocations() {
     const valid = locations.filter((l) => l.name.trim());
@@ -107,6 +185,7 @@ export function OnboardingWizard({ orgName, hasLocations, hasItems }: Props) {
   }
 
   const steps = [
+    { label: "Business", icon: ChefHat },
     { label: "Locations", icon: MapPin },
     { label: "Items", icon: Package },
     { label: "Done", icon: CheckCircle2 },
@@ -119,15 +198,15 @@ export function OnboardingWizard({ orgName, hasLocations, hasItems }: Props) {
         <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-indigo-600 shadow-lg mx-auto">
           <ChefHat className="h-7 w-7 text-white" />
         </div>
-        <h1 className="text-2xl font-bold text-slate-900">Welcome to Stockwise</h1>
-        <p className="text-slate-500">Let's set up <span className="font-medium text-slate-700">{orgName}</span> in two quick steps.</p>
+        <h1 className="text-2xl font-bold text-slate-900">Welcome to Mise</h1>
+        <p className="text-slate-500">Let&apos;s set up <span className="font-medium text-slate-700">{orgName}</span> in a few quick steps.</p>
       </div>
 
       {/* Step indicator */}
       <div className="flex items-center justify-center gap-0">
         {steps.map((s, i) => {
           const Icon = s.icon;
-          const stepNum = i + 1;
+          const stepNum = i;
           const done = step > stepNum;
           const active = step === stepNum;
           return (
@@ -157,19 +236,62 @@ export function OnboardingWizard({ orgName, hasLocations, hasItems }: Props) {
         <div className="rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">{error}</div>
       )}
 
+      {/* Step 0 — Business type */}
+      {step === 0 && (
+        <div className="space-y-5">
+          <div>
+            <h2 className="text-lg font-semibold text-slate-900">What type of business are you?</h2>
+            <p className="text-sm text-slate-500 mt-0.5">We&apos;ll pre-configure locations and features to match your operation.</p>
+          </div>
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+            {BUSINESS_TYPES.map((biz) => {
+              const Icon = biz.icon;
+              const selected = businessType === biz.key;
+              return (
+                <button
+                  key={biz.key}
+                  type="button"
+                  onClick={() => { setBusinessType(biz.key); setError(""); }}
+                  className={cn(
+                    "flex flex-col items-start gap-2 rounded-xl border-2 p-4 text-left transition-all",
+                    selected
+                      ? "border-indigo-600 bg-indigo-50"
+                      : "border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50"
+                  )}
+                >
+                  <div className={cn(
+                    "flex h-9 w-9 items-center justify-center rounded-lg",
+                    selected ? "bg-indigo-600" : "bg-slate-100"
+                  )}>
+                    <Icon className={cn("h-4 w-4", selected ? "text-white" : "text-slate-500")} />
+                  </div>
+                  <div>
+                    <p className={cn("text-sm font-semibold", selected ? "text-indigo-900" : "text-slate-900")}>{biz.label}</p>
+                    <p className="text-xs text-slate-500 mt-0.5">{biz.description}</p>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+          <Button className="w-full" onClick={submitBusinessType} disabled={loading || !businessType}>
+            {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+            Continue <ArrowRight className="ml-2 h-4 w-4" />
+          </Button>
+        </div>
+      )}
+
       {/* Step 1 — Locations */}
       {step === 1 && (
         <div className="space-y-5">
           <div>
             <h2 className="text-lg font-semibold text-slate-900">Add your storage locations</h2>
-            <p className="text-sm text-slate-500 mt-0.5">Locations are where you track stock — kitchens, bars, fridges, stores.</p>
+            <p className="text-sm text-slate-500 mt-0.5">Locations are where you track stock — kitchens, bars, stores, wards.</p>
           </div>
 
-          {/* Presets */}
           <div>
-            <p className="text-xs font-medium text-slate-500 mb-2 uppercase tracking-wide">Quick add</p>
+            <p className="text-xs font-medium text-slate-500 mb-2 uppercase tracking-wide">Quick add for {selectedBiz.label}</p>
             <div className="flex flex-wrap gap-2">
-              {LOCATION_PRESETS.map((p) => (
+              {selectedBiz.presets.map((p) => (
                 <button
                   key={p.name}
                   type="button"
@@ -231,7 +353,7 @@ export function OnboardingWizard({ orgName, hasLocations, hasItems }: Props) {
               <span className="col-span-2 text-xs font-medium text-slate-500">SKU *</span>
               <span className="col-span-2 text-xs font-medium text-slate-500">Unit</span>
               <span className="col-span-2 text-xs font-medium text-slate-500">Category</span>
-              <span className="col-span-2 text-xs font-medium text-slate-500">Cost ($)</span>
+              <span className="col-span-2 text-xs font-medium text-slate-500">Cost</span>
             </div>
             {items.map((item, i) => (
               <div key={i} className="grid grid-cols-12 gap-2 items-center">

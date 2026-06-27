@@ -69,7 +69,7 @@ export default function RegisterPage() {
           <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-600 shadow-lg">
             <ChefHat className="h-6 w-6 text-white" />
           </div>
-          <h1 className="text-2xl font-bold text-slate-900">Stockwise</h1>
+          <h1 className="text-2xl font-bold text-slate-900">Mise</h1>
           <p className="text-sm text-slate-500">Create your organization</p>
         </div>
 

@@ -12,6 +12,7 @@ model Organization {
   slug           String   @unique
   plan           String   @default("FREE")
   deploymentMode String   @default("SAAS")
+  businessType   String   @default("RESTAURANT")
   logoUrl        String?
   brandColor     String?
   createdAt      DateTime @default(now())

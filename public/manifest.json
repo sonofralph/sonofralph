@@ -1,6 +1,6 @@
 {
-  "name": "Stockwise",
-  "short_name": "Stockwise",
+  "name": "Mise",
+  "short_name": "Mise",
   "description": "Hospitality inventory management",
   "start_url": "/dashboard",
   "display": "standalone",

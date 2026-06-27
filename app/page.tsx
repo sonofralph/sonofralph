@@ -20,7 +20,7 @@ export default async function LandingPage() {
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-600">
               <Package className="h-4 w-4 text-white" />
             </div>
-            <span className="text-lg font-bold text-slate-900">Stockwise</span>
+            <span className="text-lg font-bold text-slate-900">Mise</span>
           </div>
           <nav className="hidden items-center gap-8 text-sm font-medium text-slate-600 md:flex">
             <a href="#features" className="hover:text-slate-900 transition-colors">Features</a>
@@ -52,7 +52,7 @@ export default async function LandingPage() {
             <span className="text-indigo-600">as fast as your kitchen</span>
           </h1>
           <p className="mx-auto mb-10 max-w-2xl text-lg text-slate-500">
-            Stockwise gives your team real-time visibility into every item, location, and supplier — so you never run out, never over-order, and never lose margin to waste.
+            Mise gives your team real-time visibility into every item, location, and supplier — so you never run out, never over-order, and never lose margin to waste.
           </p>
           <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
             <Link href="/register" className="flex items-center gap-2 rounded-xl bg-indigo-600 px-8 py-3.5 text-base font-semibold text-white shadow-lg shadow-indigo-200 hover:bg-indigo-700 transition-all hover:shadow-indigo-300">
@@ -125,7 +125,7 @@ export default async function LandingPage() {
       <section id="features" className="mx-auto max-w-6xl px-6 py-24">
         <div className="mb-16 text-center">
           <h2 className="text-3xl font-extrabold text-slate-900 mb-3">Everything your team needs</h2>
-          <p className="text-slate-500 max-w-xl mx-auto">From receiving dock to service pass — Stockwise covers the full inventory lifecycle with no complexity.</p>
+          <p className="text-slate-500 max-w-xl mx-auto">From receiving dock to service pass — Mise covers the full inventory lifecycle with no complexity.</p>
         </div>
         <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
           {[
@@ -235,7 +235,7 @@ export default async function LandingPage() {
       <section className="bg-indigo-600 py-20 text-center">
         <div className="mx-auto max-w-2xl px-6">
           <h2 className="mb-4 text-3xl font-extrabold text-white">Ready to take control of your inventory?</h2>
-          <p className="mb-8 text-indigo-200">Join hundreds of hospitality teams who trust Stockwise to run their operations.</p>
+          <p className="mb-8 text-indigo-200">Join hundreds of hospitality teams who trust Mise to run their operations.</p>
           <Link href="/register" className="inline-flex items-center gap-2 rounded-xl bg-white px-8 py-3.5 text-base font-bold text-indigo-600 hover:bg-indigo-50 transition-colors shadow-lg">
             Start for free <ArrowRight className="h-4 w-4" />
           </Link>
@@ -249,9 +249,9 @@ export default async function LandingPage() {
             <div className="flex h-6 w-6 items-center justify-center rounded-md bg-indigo-600">
               <Package className="h-3.5 w-3.5 text-white" />
             </div>
-            <span className="text-sm font-bold text-slate-700">Stockwise</span>
+            <span className="text-sm font-bold text-slate-700">Mise</span>
           </div>
-          <p className="text-xs text-slate-400">© {new Date().getFullYear()} Stockwise. Built for hospitality.</p>
+          <p className="text-xs text-slate-400">© {new Date().getFullYear()} Mise. Built for hospitality.</p>
           <div className="flex gap-6 text-xs text-slate-400">
             <a href="#" className="hover:text-slate-600">Privacy</a>
             <a href="#" className="hover:text-slate-600">Terms</a>

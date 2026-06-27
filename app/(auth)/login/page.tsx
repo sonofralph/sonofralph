@@ -53,7 +53,7 @@ export default function LoginPage() {
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/20 backdrop-blur">
               <ChefHat className="h-5 w-5 text-white" />
             </div>
-            <span className="text-xl font-bold text-white">Stockwise</span>
+            <span className="text-xl font-bold text-white">Mise</span>
           </div>
         </div>
 
@@ -109,7 +109,7 @@ export default function LoginPage() {
             <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-600 shadow-lg">
               <ChefHat className="h-6 w-6 text-white" />
             </div>
-            <h1 className="text-xl font-bold text-slate-900">Stockwise</h1>
+            <h1 className="text-xl font-bold text-slate-900">Mise</h1>
           </div>
 
           <div>
