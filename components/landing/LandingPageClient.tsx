@@ -31,22 +31,21 @@ function LanguageSwitcher({ lang, setLang }: { lang: Language; setLang: (l: Lang
         aria-label="Select language"
       >
         <Globe className="h-3.5 w-3.5" />
-        <span>{current.flag} {current.nativeName}</span>
+        <span>{current.nativeName}</span>
         <ChevronDown className={`h-3 w-3 transition-transform ${open ? "rotate-180" : ""}`} />
       </button>
 
       {open && (
-        <div className="absolute right-0 top-full z-50 mt-1 w-44 rounded-xl border border-slate-100 bg-white py-1 shadow-lg">
+        <div className="absolute right-0 top-full z-50 mt-1 w-40 rounded-xl border border-slate-100 bg-white py-1 shadow-lg">
           {languages.map((l) => (
             <button
               key={l.code}
               onClick={() => { setLang(l.code); setOpen(false); }}
-              className={`flex w-full items-center gap-2.5 px-3 py-2 text-sm transition-colors hover:bg-slate-50 ${
+              className={`flex w-full items-center px-4 py-2 text-sm transition-colors hover:bg-slate-50 ${
                 l.code === lang ? "font-semibold text-indigo-600" : "text-slate-700"
               }`}
             >
-              <span>{l.flag}</span>
-              <span>{l.nativeName}</span>
+              {l.nativeName}
             </button>
           ))}
         </div>
@@ -97,13 +96,13 @@ export default function LandingPageClient() {
             <a href="#testimonials"  className="hover:text-slate-900 transition-colors">{t.nav.customers}</a>
           </nav>
           <div className="flex items-center gap-3">
-            <LanguageSwitcher lang={lang} setLang={setLang} />
             <Link href="/login" className="text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors">
               {t.nav.signIn}
             </Link>
             <Link href="/register" className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-700 transition-colors">
               {t.nav.startFree}
             </Link>
+            <LanguageSwitcher lang={lang} setLang={setLang} />
           </div>
         </div>
       </header>
