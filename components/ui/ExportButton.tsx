@@ -6,10 +6,10 @@ import { Button } from "@/components/ui/button";
 
 interface ExportButtonProps {
   endpoint: string;
-  filename?: string;
+  label?: string;
 }
 
-export function ExportButton({ endpoint }: ExportButtonProps) {
+export function ExportButton({ endpoint, label = "Export CSV" }: ExportButtonProps) {
   const [loading, setLoading] = useState(false);
 
   const handleExport = async () => {
@@ -33,7 +33,7 @@ export function ExportButton({ endpoint }: ExportButtonProps) {
   return (
     <Button variant="outline" size="sm" onClick={handleExport} disabled={loading}>
       {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Download className="mr-2 h-4 w-4" />}
-      Export CSV
+      {label}
     </Button>
   );
 }

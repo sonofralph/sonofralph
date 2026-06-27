@@ -61,7 +61,7 @@ export default async function PurchaseOrdersPage() {
         {canCreate && (
           <div className="flex items-center gap-2">
             <AutoGeneratePOButton />
-            <ExportButton endpoint="/api/export/movements" />
+            <ExportButton endpoint="/api/export/purchase-orders" label="Export CSV" />
             <Link href="/purchase-orders/new">
               <Button>
                 <Plus className="mr-2 h-4 w-4" />

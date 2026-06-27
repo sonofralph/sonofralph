@@ -9,6 +9,7 @@ import { formatCurrency } from "@/lib/utils";
 import Link from "next/link";
 import { Plus, ChefHat, TrendingUp, DollarSign, Percent } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { ExportButton } from "@/components/ui/ExportButton";
 import { cn } from "@/lib/utils";
 
 export default async function RecipesPage() {
@@ -36,14 +37,17 @@ export default async function RecipesPage() {
           <h1 className="text-2xl font-bold text-slate-900">Recipes & Food Cost</h1>
           <p className="text-sm text-slate-500">{recipes.length} recipes · Track ingredient costs and margins</p>
         </div>
-        {canManage && (
-          <Link href="/recipes/new">
-            <Button>
-              <Plus className="mr-2 h-4 w-4" />
-              New Recipe
-            </Button>
-          </Link>
-        )}
+        <div className="flex items-center gap-2">
+          <ExportButton endpoint="/api/export/recipes" label="Export CSV" />
+          {canManage && (
+            <Link href="/recipes/new">
+              <Button>
+                <Plus className="mr-2 h-4 w-4" />
+                New Recipe
+              </Button>
+            </Link>
+          )}
+        </div>
       </div>
 
       {recipes.length === 0 ? (
