@@ -1,0 +1,41 @@
+{
+  "name": "Stockwise",
+  "short_name": "Stockwise",
+  "description": "Hospitality inventory management",
+  "start_url": "/dashboard",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#4f46e5",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["business", "productivity"],
+  "shortcuts": [
+    {
+      "name": "Quick Movement",
+      "short_name": "Quick",
+      "description": "Log a stock movement fast",
+      "url": "/quick",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Stocktake",
+      "short_name": "Stocktake",
+      "description": "Count current stock",
+      "url": "/stocktake",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+    }
+  ]
+}

@@ -9,6 +9,13 @@ export const metadata: Metadata = {
   title: "Stockwise — Hospitality Inventory Management",
   description:
     "Multi-tenant inventory management system for hotels, restaurants, and hospitality businesses.",
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "Stockwise",
+  },
+  formatDetection: { telephone: false },
 };
 
 export default function RootLayout({
@@ -18,6 +25,13 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className="h-full">
+      <head>
+        <meta name="mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+        <meta name="theme-color" content="#4f46e5" />
+        <link rel="apple-touch-icon" href="/icon-192.png" />
+      </head>
       <body className={`${inter.className} h-full bg-slate-50 antialiased`}>
         <Providers>{children}</Providers>
       </body>

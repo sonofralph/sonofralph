@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import {
   LayoutDashboard, Package, ArrowLeftRight, ShoppingCart,
   Truck, MapPin, Bell, BarChart3, Settings, Users, ChefHat,
-  UtensilsCrossed, Shield, X, RefreshCw, ClipboardList, Trash2, Zap,
+  UtensilsCrossed, Shield, X, RefreshCw, ClipboardList, Trash2, Zap, Target, Clock,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { UserRole } from "@/types";
@@ -30,6 +30,7 @@ const navItems: NavItem[] = [
   { label: "Alerts",          href: "/alerts",          icon: Bell,            roles: ["OWNER", "ADMIN", "MANAGER"] },
   { label: "Stocktake",       href: "/stocktake",       icon: ClipboardList,   roles: ["OWNER", "ADMIN", "MANAGER"] },
   { label: "Wastage",         href: "/wastage",         icon: Trash2,          roles: ["OWNER", "ADMIN", "MANAGER"] },
+  { label: "Par Levels",       href: "/par-levels",      icon: Target,          roles: ["OWNER", "ADMIN", "MANAGER"] },
   { label: "Reorder",         href: "/reorder",         icon: RefreshCw,       roles: ["OWNER", "ADMIN", "MANAGER"] },
   { label: "Reports",         href: "/reports",         icon: BarChart3,       roles: ["OWNER", "ADMIN", "MANAGER"] },
   { label: "Audit Log",       href: "/audit",           icon: Shield,          roles: ["OWNER", "ADMIN"] },
@@ -40,7 +41,7 @@ const navItems: NavItem[] = [
 const navGroups = [
   { label: "Operations", keys: ["Dashboard", "Inventory", "Stock Movements", "Quick Movement", "Transfer"] },
   { label: "Procurement", keys: ["Purchase Orders", "Suppliers"] },
-  { label: "Management", keys: ["Recipes", "Locations", "Alerts", "Stocktake", "Wastage", "Reorder", "Reports"] },
+  { label: "Management", keys: ["Recipes", "Locations", "Alerts", "Stocktake", "Wastage", "Par Levels", "Reorder", "Reports"] },
   { label: "Admin", keys: ["Audit Log", "Team", "Settings"] },
 ];
 

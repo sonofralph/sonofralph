@@ -52,6 +52,9 @@ const routeLabels: Record<string, string> = {
   "/wastage": "Wastage Tracking",
   "/quick": "Quick Movement",
   "/transfer": "Stock Transfer",
+  "/par-levels": "Par Level Management",
+  "/reports/aging": "Inventory Aging Report",
+  "/settings/notifications": "Notification Preferences",
 };
 
 export function Header({ user, alertCount = 0, alerts = [], onMenuToggle }: HeaderProps) {

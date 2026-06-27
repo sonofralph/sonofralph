@@ -7,7 +7,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { StockBadge } from "@/components/inventory/StockBadge";
-import { TrendingUp, TrendingDown, Package, BarChart3, DollarSign, ShoppingCart } from "lucide-react";
+import { TrendingUp, TrendingDown, Package, BarChart3, DollarSign, ShoppingCart, Clock } from "lucide-react";
+import Link from "next/link";
 import { formatCurrency } from "@/lib/utils";
 import { ExportButton } from "@/components/ui/ExportButton";
 
@@ -276,6 +277,16 @@ export default async function ReportsPage() {
             )}
           </CardContent>
         </Card>
+      </div>
+      {/* Quick links to sub-reports */}
+      <div className="flex items-center gap-3">
+        <Link href="/reports/aging" className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-3 hover:border-indigo-300 hover:bg-indigo-50 transition-colors">
+          <Clock className="h-4 w-4 text-amber-500" />
+          <div>
+            <p className="text-sm font-semibold text-slate-800">Inventory Aging Report</p>
+            <p className="text-xs text-slate-400">Items with no movement in 14–90 days</p>
+          </div>
+        </Link>
       </div>
     </div>
   );
