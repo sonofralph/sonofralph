@@ -75,8 +75,8 @@ export function Sidebar({ userRole, orgName }: SidebarProps) {
                 {groupItems.map((item) => {
                   const Icon = item.icon;
                   const isActive =
-                    item.href === "/dashboard"
-                      ? pathname === "/dashboard"
+                    item.href === "/dashboard" || item.href === "/settings"
+                      ? pathname === item.href
                       : pathname === item.href || pathname.startsWith(item.href + "/");
 
                   return (
