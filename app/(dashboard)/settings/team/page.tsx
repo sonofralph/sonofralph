@@ -81,6 +81,9 @@ export default async function TeamPage() {
                       </div>
                       <div>
                         <p className="font-medium text-slate-900">{member.name ?? "—"}</p>
+                        {member.jobTitle && (
+                          <p className="text-xs text-slate-500">{member.jobTitle}</p>
+                        )}
                         {member.id === user.id && (
                           <span className="text-xs text-indigo-600">(you)</span>
                         )}
@@ -112,7 +115,7 @@ export default async function TeamPage() {
         <CardHeader>
           <CardTitle className="text-base">Role Permissions</CardTitle>
           <CardDescription>
-            What each role can see and do in Stockwise
+            What each role can see and do in Mise
           </CardDescription>
         </CardHeader>
         <CardContent>

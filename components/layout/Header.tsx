@@ -186,8 +186,8 @@ export function Header({ user, alertCount = 0, alerts = [], onMenuToggle }: Head
                 <p className="text-xs font-medium text-slate-900">
                   {user.name ?? user.email}
                 </p>
-                <p className="text-xs text-slate-500 capitalize">
-                  {user.role.toLowerCase()}
+                <p className="text-xs text-slate-500">
+                  {user.jobTitle ?? user.role.charAt(0) + user.role.slice(1).toLowerCase()}
                 </p>
               </div>
             </Button>
@@ -196,6 +196,9 @@ export function Header({ user, alertCount = 0, alerts = [], onMenuToggle }: Head
             <DropdownMenuLabel>
               <div>
                 <p className="font-medium">{user.name ?? "User"}</p>
+                {user.jobTitle && (
+                  <p className="text-xs font-normal text-slate-700">{user.jobTitle}</p>
+                )}
                 <p className="text-xs font-normal text-slate-500">
                   {user.email}
                 </p>

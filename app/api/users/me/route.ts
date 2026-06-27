@@ -8,6 +8,7 @@ import bcrypt from "bcryptjs";
 
 const patchSchema = z.object({
   name: z.string().min(1).optional(),
+  jobTitle: z.string().max(100).nullable().optional(),
   currentPassword: z.string().optional(),
   newPassword: z.string().min(8).optional(),
 });
@@ -22,7 +23,7 @@ export async function PATCH(req: Request) {
   const parsed = patchSchema.safeParse(body);
   if (!parsed.success) return NextResponse.json({ error: parsed.error.issues[0]?.message ?? "Invalid data" }, { status: 400 });
 
-  const { name, currentPassword, newPassword } = parsed.data;
+  const { name, jobTitle, currentPassword, newPassword } = parsed.data;
 
   if (newPassword) {
     if (!currentPassword) {
@@ -35,8 +36,9 @@ export async function PATCH(req: Request) {
     if (!valid) return NextResponse.json({ error: "Current password is incorrect" }, { status: 400 });
   }
 
-  const updateData: Record<string, string> = {};
+  const updateData: Record<string, string | null> = {};
   if (name) updateData.name = name;
+  if (jobTitle !== undefined) updateData.jobTitle = jobTitle;
   if (newPassword) updateData.passwordHash = await bcrypt.hash(newPassword, 12);
 
   if (Object.keys(updateData).length === 0) {
@@ -46,7 +48,7 @@ export async function PATCH(req: Request) {
   const updated = await prisma.user.update({
     where: { id: user.id },
     data: updateData,
-    select: { id: true, name: true, email: true, role: true },
+    select: { id: true, name: true, jobTitle: true, email: true, role: true },
   });
 
   return NextResponse.json(updated);

@@ -44,6 +44,7 @@ export const authOptions: NextAuthOptions = {
           id: user.id,
           email: user.email,
           name: user.name,
+          jobTitle: user.jobTitle,
           role: user.role,
           organizationId: user.organizationId,
           organizationName: user.organization.name,
@@ -56,6 +57,7 @@ export const authOptions: NextAuthOptions = {
     async jwt({ token, user }) {
       if (user) {
         token.role = (user as any).role;
+        token.jobTitle = (user as any).jobTitle;
         token.organizationId = (user as any).organizationId;
         token.organizationName = (user as any).organizationName;
         token.organizationSlug = (user as any).organizationSlug;
@@ -66,6 +68,7 @@ export const authOptions: NextAuthOptions = {
       if (session.user) {
         (session.user as any).id = token.sub;
         (session.user as any).role = token.role;
+        (session.user as any).jobTitle = token.jobTitle;
         (session.user as any).organizationId = token.organizationId;
         (session.user as any).organizationName = token.organizationName;
         (session.user as any).organizationSlug = token.organizationSlug;

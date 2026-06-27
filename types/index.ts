@@ -59,6 +59,7 @@ export type SessionUser = {
   id: string;
   email: string;
   name?: string | null;
+  jobTitle?: string | null;
   role: UserRole;
   organizationId: string;
   organizationName: string;

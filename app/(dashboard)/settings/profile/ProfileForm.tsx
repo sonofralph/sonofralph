@@ -10,6 +10,7 @@ import { SessionUser } from "@/types";
 
 export function ProfileForm({ user }: { user: SessionUser }) {
   const [name, setName] = useState(user.name ?? "");
+  const [jobTitle, setJobTitle] = useState(user.jobTitle ?? "");
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -32,8 +33,9 @@ export function ProfileForm({ user }: { user: SessionUser }) {
     }
 
     setLoading(true);
-    const payload: Record<string, string> = {};
+    const payload: Record<string, string | null> = {};
     if (name !== (user.name ?? "")) payload.name = name;
+    if (jobTitle !== (user.jobTitle ?? "")) payload.jobTitle = jobTitle || null;
     if (newPassword) { payload.currentPassword = currentPassword; payload.newPassword = newPassword; }
 
     if (Object.keys(payload).length === 0) {
@@ -83,6 +85,11 @@ export function ProfileForm({ user }: { user: SessionUser }) {
             <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="Your name" />
           </div>
           <div className="space-y-1.5">
+            <Label>Job title</Label>
+            <Input value={jobTitle} onChange={(e) => setJobTitle(e.target.value)} placeholder="e.g. Head Chef, Bar Manager, Events Coordinator" />
+            <p className="text-xs text-slate-400">Displayed alongside your name — does not affect your access level</p>
+          </div>
+          <div className="space-y-1.5">
             <Label>Email</Label>
             <Input value={user.email} disabled className="bg-slate-50 text-slate-500" />
             <p className="text-xs text-slate-400">Email cannot be changed</p>
@@ -90,6 +97,7 @@ export function ProfileForm({ user }: { user: SessionUser }) {
           <div className="space-y-1.5">
             <Label>Role</Label>
             <Input value={user.role.charAt(0) + user.role.slice(1).toLowerCase()} disabled className="bg-slate-50 text-slate-500 capitalize" />
+            <p className="text-xs text-slate-400">Roles are managed by your organisation owner</p>
           </div>
         </CardContent>
       </Card>

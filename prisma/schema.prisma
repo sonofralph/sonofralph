@@ -32,6 +32,7 @@ model User {
   id             String   @id @default(cuid())
   email          String   @unique
   name           String?
+  jobTitle       String?
   passwordHash   String?
   role           String   @default("STAFF")
   organizationId String
