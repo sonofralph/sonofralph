@@ -11,7 +11,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Bell, Building, CreditCard, Shield, User } from "lucide-react";
+import { Bell, Building, CreditCard, Shield, User, Palette } from "lucide-react";
 import { OrgNameForm } from "./OrgNameForm";
 import Link from "next/link";
 
@@ -73,6 +73,17 @@ export default async function SettingsPage() {
             <p className="text-xs text-slate-500">Email alert preferences</p>
           </div>
         </Link>
+        {user.role === "OWNER" && (
+          <Link href="/settings/branding" className="flex items-center gap-3 rounded-xl border border-slate-200 bg-white px-5 py-4 hover:bg-slate-50 transition-colors group">
+            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-violet-50">
+              <Palette className="h-4 w-4 text-violet-600" />
+            </div>
+            <div>
+              <p className="text-sm font-semibold text-slate-900 group-hover:text-indigo-600 transition-colors">Branding</p>
+              <p className="text-xs text-slate-500">Logo & brand colours</p>
+            </div>
+          </Link>
+        )}
       </div>
 
       {/* Organization info */}

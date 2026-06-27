@@ -55,6 +55,7 @@ const routeLabels: Record<string, string> = {
   "/par-levels": "Par Level Management",
   "/reports/aging": "Inventory Aging Report",
   "/settings/notifications": "Notification Preferences",
+  "/settings/branding": "Branding",
 };
 
 export function Header({ user, alertCount = 0, alerts = [], onMenuToggle }: HeaderProps) {

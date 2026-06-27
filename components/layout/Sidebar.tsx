@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import {
   LayoutDashboard, Package, ArrowLeftRight, ShoppingCart,
   Truck, MapPin, Bell, BarChart3, Settings, Users, ChefHat,
-  UtensilsCrossed, Shield, X, RefreshCw, ClipboardList, Trash2, Zap, Target, Clock,
+  UtensilsCrossed, Shield, X, RefreshCw, ClipboardList, Trash2, Zap, Target, Palette,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { UserRole } from "@/types";
@@ -30,28 +30,31 @@ const navItems: NavItem[] = [
   { label: "Alerts",          href: "/alerts",          icon: Bell,            roles: ["OWNER", "ADMIN", "MANAGER"] },
   { label: "Stocktake",       href: "/stocktake",       icon: ClipboardList,   roles: ["OWNER", "ADMIN", "MANAGER"] },
   { label: "Wastage",         href: "/wastage",         icon: Trash2,          roles: ["OWNER", "ADMIN", "MANAGER"] },
-  { label: "Par Levels",       href: "/par-levels",      icon: Target,          roles: ["OWNER", "ADMIN", "MANAGER"] },
+  { label: "Par Levels",      href: "/par-levels",      icon: Target,          roles: ["OWNER", "ADMIN", "MANAGER"] },
   { label: "Reorder",         href: "/reorder",         icon: RefreshCw,       roles: ["OWNER", "ADMIN", "MANAGER"] },
   { label: "Reports",         href: "/reports",         icon: BarChart3,       roles: ["OWNER", "ADMIN", "MANAGER"] },
   { label: "Audit Log",       href: "/audit",           icon: Shield,          roles: ["OWNER", "ADMIN"] },
   { label: "Team",            href: "/settings/team",   icon: Users,           roles: ["OWNER", "ADMIN"] },
   { label: "Settings",        href: "/settings",        icon: Settings,        roles: ["OWNER", "ADMIN"] },
+  { label: "Branding",        href: "/settings/branding", icon: Palette,       roles: ["OWNER"] },
 ];
 
 const navGroups = [
-  { label: "Operations", keys: ["Dashboard", "Inventory", "Stock Movements", "Quick Movement", "Transfer"] },
+  { label: "Operations",  keys: ["Dashboard", "Inventory", "Stock Movements", "Quick Movement", "Transfer"] },
   { label: "Procurement", keys: ["Purchase Orders", "Suppliers"] },
-  { label: "Management", keys: ["Recipes", "Locations", "Alerts", "Stocktake", "Wastage", "Par Levels", "Reorder", "Reports"] },
-  { label: "Admin", keys: ["Audit Log", "Team", "Settings"] },
+  { label: "Management",  keys: ["Recipes", "Locations", "Alerts", "Stocktake", "Wastage", "Par Levels", "Reorder", "Reports"] },
+  { label: "Admin",       keys: ["Audit Log", "Team", "Settings", "Branding"] },
 ];
 
 interface SidebarProps {
   userRole: UserRole;
   orgName: string;
   onClose?: () => void;
+  logoUrl?: string | null;
+  brandColor?: string;
 }
 
-export function Sidebar({ userRole, orgName, onClose }: SidebarProps) {
+export function Sidebar({ userRole, orgName, onClose, logoUrl, brandColor = "#4f46e5" }: SidebarProps) {
   const pathname = usePathname();
   const visibleItems = navItems.filter((item) => item.roles.includes(userRole));
 
@@ -64,12 +67,19 @@ export function Sidebar({ userRole, orgName, onClose }: SidebarProps) {
             <X className="h-4 w-4 text-slate-500" />
           </button>
         )}
-        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-600 shadow-sm">
-          <ChefHat className="h-4 w-4 text-white" />
+        <div
+          className="flex h-8 w-8 items-center justify-center rounded-lg shadow-sm overflow-hidden shrink-0"
+          style={{ backgroundColor: logoUrl ? "transparent" : brandColor }}
+        >
+          {logoUrl ? (
+            <img src={logoUrl} alt="Logo" className="h-8 w-8 object-contain rounded-lg" />
+          ) : (
+            <ChefHat className="h-4 w-4 text-white" />
+          )}
         </div>
         <div className="min-w-0">
-          <p className="text-sm font-bold text-slate-900">Stockwise</p>
-          <p className="text-[11px] text-slate-400 truncate">{orgName}</p>
+          <p className="text-sm font-bold text-slate-900 truncate">{orgName}</p>
+          <p className="text-[11px] text-slate-400">Inventory Management</p>
         </div>
       </div>
 
@@ -97,10 +107,9 @@ export function Sidebar({ userRole, orgName, onClose }: SidebarProps) {
                         href={item.href}
                         className={cn(
                           "flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm font-medium transition-all duration-150",
-                          isActive
-                            ? "bg-indigo-600 text-white shadow-sm"
-                            : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
+                          isActive ? "text-white shadow-sm" : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
                         )}
+                        style={isActive ? { backgroundColor: brandColor } : undefined}
                       >
                         <Icon className={cn("h-4 w-4 shrink-0", isActive ? "text-white" : "text-slate-400")} />
                         {item.label}
@@ -116,9 +125,9 @@ export function Sidebar({ userRole, orgName, onClose }: SidebarProps) {
 
       {/* Footer */}
       <div className="border-t border-slate-100 p-3">
-        <div className="rounded-lg bg-gradient-to-r from-indigo-50 to-violet-50 border border-indigo-100 px-3 py-2.5">
-          <p className="text-xs font-semibold text-indigo-700">Stockwise Pro</p>
-          <p className="text-[11px] text-indigo-400">Hospitality IMS · v1.0</p>
+        <div className="rounded-lg px-3 py-2.5" style={{ backgroundColor: `${brandColor}15`, border: `1px solid ${brandColor}30` }}>
+          <p className="text-xs font-semibold" style={{ color: brandColor }}>Mise Pro</p>
+          <p className="text-[11px] text-slate-400">Hospitality IMS · v1.0</p>
         </div>
       </div>
     </aside>

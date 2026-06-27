@@ -29,6 +29,11 @@ export default async function DashboardLayout({
     where: { organizationId: user.organizationId, status: "OPEN" },
   });
 
+  const org = await prisma.organization.findUnique({
+    where: { id: user.organizationId },
+    select: { logoUrl: true, brandColor: true },
+  });
+
   const alerts = openAlerts.map((a) => ({
     id: a.id,
     type: a.type,
@@ -39,7 +44,13 @@ export default async function DashboardLayout({
   }));
 
   return (
-    <DashboardShell user={user} alertCount={alertCount} alerts={alerts}>
+    <DashboardShell
+      user={user}
+      alertCount={alertCount}
+      alerts={alerts}
+      logoUrl={org?.logoUrl ?? null}
+      brandColor={org?.brandColor ?? null}
+    >
       {children}
     </DashboardShell>
   );

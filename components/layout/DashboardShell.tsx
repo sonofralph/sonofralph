@@ -19,13 +19,16 @@ interface Props {
   alertCount: number;
   alerts: AlertPreview[];
   children: React.ReactNode;
+  logoUrl?: string | null;
+  brandColor?: string | null;
 }
 
-export function DashboardShell({ user, alertCount, alerts, children }: Props) {
+export function DashboardShell({ user, alertCount, alerts, children, logoUrl, brandColor }: Props) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const color = brandColor ?? "#4f46e5";
 
   return (
-    <div className="flex h-full">
+    <div className="flex h-full" style={{ "--brand": color } as React.CSSProperties}>
       {/* Mobile overlay */}
       {sidebarOpen && (
         <div
@@ -40,6 +43,8 @@ export function DashboardShell({ user, alertCount, alerts, children }: Props) {
           userRole={user.role}
           orgName={user.organizationName}
           onClose={() => setSidebarOpen(false)}
+          logoUrl={logoUrl}
+          brandColor={color}
         />
       </div>
 
