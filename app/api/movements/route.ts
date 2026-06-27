@@ -4,6 +4,7 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { z } from "zod";
 import { SessionUser } from "@/types";
+import { sendAlertEmail } from "@/lib/email";
 
 const MOVEMENT_TYPES = ["RECEIPT", "ISSUE", "TRANSFER", "ADJUSTMENT", "WASTAGE"] as const;
 
@@ -120,6 +121,7 @@ export async function POST(req: Request) {
       });
 
       // Check if we need to generate an alert
+      let newAlertType: "LOW_STOCK" | "OUT_OF_STOCK" | null = null;
       if (record.quantity <= record.reorderPoint) {
         const existingAlert = await tx.alert.findFirst({
           where: {
@@ -129,12 +131,13 @@ export async function POST(req: Request) {
           },
         });
         if (!existingAlert) {
+          newAlertType = record.quantity <= 0 ? "OUT_OF_STOCK" : "LOW_STOCK";
           await tx.alert.create({
             data: {
               organizationId: user.organizationId,
               itemId: data.itemId,
               locationId: data.locationId,
-              type: record.quantity <= 0 ? "OUT_OF_STOCK" : "LOW_STOCK",
+              type: newAlertType,
               status: "OPEN",
               message: `${item.name} is ${
                 record.quantity <= 0 ? "out of stock" : "running low"
@@ -157,10 +160,31 @@ export async function POST(req: Request) {
         },
       });
 
-      return movement;
+      return { movement, newAlertType, currentQty: record.quantity };
     });
 
-    return NextResponse.json(result, { status: 201 });
+    // Send alert email outside transaction — failure must not affect the movement
+    if (result.newAlertType) {
+      const admins = await prisma.user.findMany({
+        where: { organizationId: user.organizationId, role: { in: ["OWNER", "ADMIN"] } },
+        select: { email: true },
+      });
+      const org = await prisma.organization.findUnique({
+        where: { id: user.organizationId },
+        select: { name: true },
+      });
+      sendAlertEmail({
+        to: admins.map((u) => u.email),
+        itemName: item.name,
+        locationName: location.name,
+        type: result.newAlertType,
+        quantity: result.currentQty,
+        unit: item.unit,
+        orgName: org?.name ?? "Your organization",
+      });
+    }
+
+    return NextResponse.json(result.movement, { status: 201 });
   } catch (err) {
     if (err instanceof z.ZodError) {
       return NextResponse.json(
