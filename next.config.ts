@@ -5,7 +5,6 @@ const allowedOrigins = process.env.NEXTAUTH_URL
   : ["localhost:3000", "localhost:3001"];
 
 const nextConfig: NextConfig = {
-  output: "standalone",
   experimental: {
     serverActions: {
       allowedOrigins,
