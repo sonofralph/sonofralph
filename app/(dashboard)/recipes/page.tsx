@@ -84,7 +84,8 @@ export default async function RecipesPage() {
               costPercent <= recipe.targetCostPercent * 1.2 ? "warning" : "over";
 
             return (
-              <Card key={recipe.id} className="hover:shadow-md transition-shadow">
+              <Link key={recipe.id} href={`/recipes/${recipe.id}`}>
+              <Card className="hover:shadow-md transition-shadow cursor-pointer">
                 <CardHeader className="pb-3">
                   <div className="flex items-start justify-between gap-2">
                     <div>
@@ -172,6 +173,7 @@ export default async function RecipesPage() {
                   </div>
                 </CardContent>
               </Card>
+              </Link>
             );
           })}
         </div>
