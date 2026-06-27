@@ -4,14 +4,27 @@ import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 import { SessionUser } from "@/types";
 
-export async function GET() {
+export async function GET(req: Request) {
   const session = await getServerSession(authOptions);
   if (!session?.user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const user = session.user as SessionUser;
+  const { searchParams } = new URL(req.url);
+  const from = searchParams.get("from");
+  const to = searchParams.get("to");
+  const type = searchParams.get("type");
+
+  const where: Record<string, unknown> = { item: { organizationId: user.organizationId } };
+  if (from || to) {
+    where.createdAt = {
+      ...(from ? { gte: new Date(from) } : {}),
+      ...(to ? { lte: new Date(to + "T23:59:59Z") } : {}),
+    };
+  }
+  if (type) where.type = type;
 
   const movements = await prisma.stockMovement.findMany({
-    where: { item: { organizationId: user.organizationId } },
+    where,
     include: {
       item: { select: { name: true, sku: true } },
       location: { select: { name: true } },

@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { MovementDialogButton } from "./MovementDialogButton";
+import { MovementsExport } from "@/components/ui/MovementsExport";
 import { formatDateTime } from "@/lib/utils";
 
 const movementTypeVariant: Record<string, any> = {
@@ -69,7 +70,10 @@ export default async function MovementsPage() {
             Track all inventory movements — receipts, issues, transfers, and adjustments
           </p>
         </div>
-        <MovementDialogButton items={items} locations={locations} />
+        <div className="flex items-center gap-2">
+          <MovementsExport />
+          <MovementDialogButton items={items} locations={locations} />
+        </div>
       </div>
 
       <Card>

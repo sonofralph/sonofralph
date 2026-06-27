@@ -22,6 +22,7 @@ const navItems: NavItem[] = [
   { label: "Inventory",       href: "/inventory",       icon: Package,         roles: ["OWNER", "ADMIN", "MANAGER", "STAFF"] },
   { label: "Stock Movements", href: "/movements",       icon: ArrowLeftRight,  roles: ["OWNER", "ADMIN", "MANAGER", "STAFF"] },
   { label: "Quick Movement",  href: "/quick",           icon: Zap,             roles: ["OWNER", "ADMIN", "MANAGER", "STAFF"] },
+  { label: "Transfer",        href: "/transfer",        icon: ArrowLeftRight,  roles: ["OWNER", "ADMIN", "MANAGER"] },
   { label: "Purchase Orders", href: "/purchase-orders", icon: ShoppingCart,    roles: ["OWNER", "ADMIN", "MANAGER"] },
   { label: "Suppliers",       href: "/suppliers",       icon: Truck,           roles: ["OWNER", "ADMIN", "MANAGER"] },
   { label: "Recipes",         href: "/recipes",         icon: UtensilsCrossed, roles: ["OWNER", "ADMIN", "MANAGER"] },
@@ -37,7 +38,7 @@ const navItems: NavItem[] = [
 ];
 
 const navGroups = [
-  { label: "Operations", keys: ["Dashboard", "Inventory", "Stock Movements", "Quick Movement"] },
+  { label: "Operations", keys: ["Dashboard", "Inventory", "Stock Movements", "Quick Movement", "Transfer"] },
   { label: "Procurement", keys: ["Purchase Orders", "Suppliers"] },
   { label: "Management", keys: ["Recipes", "Locations", "Alerts", "Stocktake", "Wastage", "Reorder", "Reports"] },
   { label: "Admin", keys: ["Audit Log", "Team", "Settings"] },

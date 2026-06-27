@@ -9,7 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { EditSupplierForm } from "./EditSupplierForm";
 import { formatDateTime, formatCurrency } from "@/lib/utils";
 import Link from "next/link";
-import { ChevronLeft, ShoppingCart } from "lucide-react";
+import { ChevronLeft, ShoppingCart, TrendingUp, Clock, CheckCircle2, XCircle } from "lucide-react";
 
 const statusColors: Record<string, string> = {
   DRAFT: "secondary",
@@ -35,7 +35,6 @@ export default async function SupplierDetailPage({
     include: {
       purchaseOrders: {
         orderBy: { createdAt: "desc" },
-        take: 10,
         include: {
           _count: { select: { lines: true } },
         },
@@ -48,9 +47,19 @@ export default async function SupplierDetailPage({
   const canEdit = ["OWNER", "ADMIN", "MANAGER"].includes(user.role);
   const canDelete = ["OWNER", "ADMIN"].includes(user.role);
 
-  const totalSpend = supplier.purchaseOrders
-    .filter((po) => po.status === "RECEIVED")
-    .reduce((s, po) => s + po.totalAmount, 0);
+  const allPOs = supplier.purchaseOrders;
+  const receivedPOs = allPOs.filter((po) => po.status === "RECEIVED");
+  const cancelledPOs = allPOs.filter((po) => po.status === "CANCELLED");
+  const totalSpend = receivedPOs.reduce((s, po) => s + po.totalAmount, 0);
+
+  // On-time delivery: received before or on expectedDate
+  const onTimeCount = receivedPOs.filter(
+    (po) => po.expectedDate && po.updatedAt <= po.expectedDate
+  ).length;
+  const onTimePct = receivedPOs.length > 0 ? Math.round((onTimeCount / receivedPOs.length) * 100) : null;
+
+  // Average order value
+  const avgOrderValue = receivedPOs.length > 0 ? totalSpend / receivedPOs.length : 0;
 
   return (
     <div className="max-w-3xl space-y-6">
@@ -82,6 +91,29 @@ export default async function SupplierDetailPage({
         canEdit={canEdit}
         canDelete={canDelete}
       />
+
+      {/* Performance stats */}
+      {allPOs.length > 0 && (
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+          {[
+            { label: "Total Orders", value: allPOs.length.toString(), icon: ShoppingCart, color: "text-indigo-600", bg: "bg-indigo-50" },
+            { label: "Total Spend", value: formatCurrency(totalSpend), icon: TrendingUp, color: "text-emerald-600", bg: "bg-emerald-50" },
+            { label: "On-time Delivery", value: onTimePct !== null ? `${onTimePct}%` : "—", icon: Clock, color: "text-blue-600", bg: "bg-blue-50" },
+            { label: "Avg Order Value", value: avgOrderValue > 0 ? formatCurrency(avgOrderValue) : "—", icon: CheckCircle2, color: "text-amber-600", bg: "bg-amber-50" },
+          ].map((stat) => {
+            const Icon = stat.icon;
+            return (
+              <div key={stat.label} className="rounded-xl border border-slate-200 bg-white p-4">
+                <div className={`flex h-8 w-8 items-center justify-center rounded-lg ${stat.bg} mb-2`}>
+                  <Icon className={`h-4 w-4 ${stat.color}`} />
+                </div>
+                <p className="text-lg font-bold text-slate-900">{stat.value}</p>
+                <p className="text-xs text-slate-500">{stat.label}</p>
+              </div>
+            );
+          })}
+        </div>
+      )}
 
       {/* Purchase order history */}
       <Card>
@@ -116,7 +148,7 @@ export default async function SupplierDetailPage({
                   </TableCell>
                 </TableRow>
               ) : (
-                supplier.purchaseOrders.map((po) => (
+                supplier.purchaseOrders.slice(0, 20).map((po) => (
                   <TableRow key={po.id}>
                     <TableCell>
                       <Link href={`/purchase-orders/${po.id}`} className="font-medium text-indigo-600 hover:underline">
