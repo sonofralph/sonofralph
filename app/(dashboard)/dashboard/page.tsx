@@ -175,6 +175,19 @@ export default async function DashboardPage() {
 
   return (
     <div className="space-y-6">
+      {/* Onboarding nudge for empty orgs */}
+      {totalItems === 0 && locationCount === 0 && (
+        <div className="flex items-center justify-between rounded-xl border border-indigo-200 bg-indigo-50 px-5 py-4">
+          <div>
+            <p className="font-semibold text-indigo-900">Finish setting up your account</p>
+            <p className="text-sm text-indigo-600 mt-0.5">Add locations and items to start tracking inventory.</p>
+          </div>
+          <a href="/onboarding" className="shrink-0 ml-4 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 transition-colors">
+            Complete setup
+          </a>
+        </div>
+      )}
+
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
