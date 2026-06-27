@@ -15,6 +15,7 @@ import {
 import { formatDateTime } from "@/lib/utils";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { DaysRangePicker } from "./DaysRangePicker";
 
 const movementTypeConfig: Record<string, { icon: React.ElementType; color: string; bg: string; label: string }> = {
   RECEIPT:    { icon: ArrowUpRight,  color: "text-emerald-600", bg: "bg-emerald-50", label: "Receipt" },
@@ -31,16 +32,24 @@ function getGreeting() {
   return "Good evening";
 }
 
-export default async function DashboardPage() {
+export default async function DashboardPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ days?: string }>;
+}) {
   const session = await getServerSession(authOptions);
   if (!session?.user) redirect("/login");
 
   const user = session.user as SessionUser;
   const orgId = user.organizationId;
 
-  // Date range: last 7 days
-  const sevenDaysAgo = new Date();
-  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+  const { days: daysParam } = await searchParams;
+  const days = [7, 30, 90].includes(Number(daysParam)) ? Number(daysParam) : 7;
+
+  const rangeStart = new Date();
+  rangeStart.setDate(rangeStart.getDate() - days);
+  // keep old name for backwards compat in queries below
+  const sevenDaysAgo = rangeStart;
 
   const [
     totalItems,
@@ -101,19 +110,17 @@ export default async function DashboardPage() {
   ]);
 
   // Build chart data: group movements by day
-  const dayLabels = Array.from({ length: 7 }, (_, i) => {
-    const d = new Date();
-    d.setDate(d.getDate() - (6 - i));
-    return d.toLocaleDateString("en-US", { weekday: "short" });
-  });
+  const labelFormat: Intl.DateTimeFormatOptions =
+    days <= 7 ? { weekday: "short" } : { month: "short", day: "numeric" };
 
-  const chartData = dayLabels.map((label, i) => {
+  const chartData = Array.from({ length: days }, (_, i) => {
     const dayStart = new Date();
-    dayStart.setDate(dayStart.getDate() - (6 - i));
+    dayStart.setDate(dayStart.getDate() - (days - 1 - i));
     dayStart.setHours(0, 0, 0, 0);
     const dayEnd = new Date(dayStart);
     dayEnd.setHours(23, 59, 59, 999);
 
+    const label = dayStart.toLocaleDateString("en-US", labelFormat);
     const dayMovements = movementsLast7Days.filter(
       (m) => m.createdAt >= dayStart && m.createdAt <= dayEnd
     );
@@ -198,9 +205,12 @@ export default async function DashboardPage() {
             Here&apos;s your inventory overview for today.
           </p>
         </div>
-        <div className="hidden sm:flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2">
-          <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-          <span className="text-xs font-medium text-slate-600">Live</span>
+        <div className="flex items-center gap-3">
+          <DaysRangePicker activeDays={days} />
+          <div className="hidden sm:flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2">
+            <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+            <span className="text-xs font-medium text-slate-600">Live</span>
+          </div>
         </div>
       </div>
 
@@ -247,7 +257,7 @@ export default async function DashboardPage() {
         <Card className="lg:col-span-2">
           <CardHeader className="pb-2">
             <CardTitle className="text-base">Stock Movement Trend</CardTitle>
-            <CardDescription>Receipts vs issues over the last 7 days</CardDescription>
+            <CardDescription>Receipts vs issues over the last {days} days</CardDescription>
           </CardHeader>
           <CardContent>
             <MovementAreaChart data={chartData} />
