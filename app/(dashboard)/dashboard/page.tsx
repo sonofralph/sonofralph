@@ -10,7 +10,7 @@ import { MovementAreaChart, CategoryPieChart } from "@/components/dashboard/Dash
 import {
   Package, AlertTriangle, ShoppingCart, MapPin,
   TrendingDown, ArrowUpRight, ArrowDownRight,
-  RefreshCw, Settings, Trash2, TrendingUp,
+  RefreshCw, Settings, Trash2, TrendingUp, ClipboardList, MessageSquare,
 } from "lucide-react";
 import { formatDateTime } from "@/lib/utils";
 import Link from "next/link";
@@ -60,6 +60,8 @@ export default async function DashboardPage({
     criticalItems,
     categoryBreakdown,
     movementsLast7Days,
+    pendingRequisitions,
+    recentHandovers,
   ] = await Promise.all([
     prisma.item.count({ where: { organizationId: orgId } }),
 
@@ -106,6 +108,32 @@ export default async function DashboardPage({
         createdAt: { gte: sevenDaysAgo },
       },
       select: { type: true, quantity: true, createdAt: true },
+    }),
+
+    // Role-aware: STAFF sees own pending requests; managers see all pending
+    prisma.requisition.findMany({
+      where: {
+        organizationId: orgId,
+        status: "PENDING",
+        ...(user.role === "STAFF" ? { requestedById: user.id } : {}),
+      },
+      include: {
+        requestedBy: { select: { name: true, email: true } },
+        location: { select: { name: true } },
+        lines: { include: { item: { select: { name: true } } } },
+      },
+      orderBy: { createdAt: "desc" },
+      take: 3,
+    }),
+
+    prisma.shiftHandover.findMany({
+      where: { organizationId: orgId },
+      include: {
+        user: { select: { name: true, email: true, jobTitle: true } },
+        location: { select: { name: true } },
+      },
+      orderBy: { createdAt: "desc" },
+      take: 3,
     }),
   ]);
 
@@ -205,6 +233,10 @@ export default async function DashboardPage({
             Here&apos;s your inventory overview for today.
           </p>
         </div>
+        <div className="flex items-center gap-2 text-xs text-slate-500">
+          <span className="rounded-full bg-slate-100 px-2.5 py-1 font-medium capitalize">{user.role.toLowerCase()}</span>
+          {user.jobTitle && <span className="text-slate-400">{user.jobTitle}</span>}
+        </div>
         <div className="flex items-center gap-3">
           <DaysRangePicker activeDays={days} />
           <div className="hidden sm:flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2">
@@ -251,6 +283,69 @@ export default async function DashboardPage({
           );
         })}
       </div>
+
+      {/* Role-aware panel */}
+      {(pendingRequisitions.length > 0 || recentHandovers.length > 0) && (
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+          {pendingRequisitions.length > 0 && (
+            <Card>
+              <CardHeader className="pb-2">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <ClipboardList className="h-4 w-4 text-amber-500" />
+                    <CardTitle className="text-base">
+                      {user.role === "STAFF" ? "Your Pending Requests" : "Pending Requisitions"}
+                    </CardTitle>
+                  </div>
+                  <Link href="/requisitions" className="text-xs text-indigo-600 hover:underline">View all</Link>
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-2">
+                {pendingRequisitions.map((req) => (
+                  <div key={req.id} className="flex items-start gap-3 rounded-lg bg-amber-50 border border-amber-100 px-3 py-2.5">
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-slate-900">{req.location.name}</p>
+                      <p className="text-xs text-slate-500">
+                        {req.requestedBy.name ?? req.requestedBy.email} · {req.lines.length} item{req.lines.length !== 1 ? "s" : ""}
+                      </p>
+                    </div>
+                    <Link href="/requisitions" className="shrink-0 text-xs font-medium text-amber-700 hover:underline">
+                      {user.role === "STAFF" ? "View" : "Review"}
+                    </Link>
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+          )}
+          {recentHandovers.length > 0 && (
+            <Card>
+              <CardHeader className="pb-2">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <MessageSquare className="h-4 w-4 text-indigo-500" />
+                    <CardTitle className="text-base">Latest Handovers</CardTitle>
+                  </div>
+                  <Link href="/handovers" className="text-xs text-indigo-600 hover:underline">View all</Link>
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-2">
+                {recentHandovers.map((h) => (
+                  <div key={h.id} className="rounded-lg border border-slate-100 bg-slate-50 px-3 py-2.5">
+                    <div className="flex items-center justify-between">
+                      <p className="text-xs font-medium text-slate-900">
+                        {h.user.name ?? h.user.email}
+                        {h.user.jobTitle && <span className="font-normal text-slate-500"> · {h.user.jobTitle}</span>}
+                      </p>
+                      <span className="text-xs text-slate-400">{h.location.name}</span>
+                    </div>
+                    <p className="text-xs text-slate-600 mt-1 line-clamp-2">{h.notes}</p>
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+          )}
+        </div>
+      )}
 
       {/* Charts */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">

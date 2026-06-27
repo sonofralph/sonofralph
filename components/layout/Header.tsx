@@ -51,6 +51,8 @@ const routeLabels: Record<string, string> = {
   "/stocktake": "Stocktake",
   "/wastage": "Wastage Tracking",
   "/quick": "Quick Movement",
+  "/requisitions": "Stock Requisitions",
+  "/handovers": "Shift Handovers",
   "/transfer": "Stock Transfer",
   "/par-levels": "Par Level Management",
   "/reports/aging": "Inventory Aging Report",

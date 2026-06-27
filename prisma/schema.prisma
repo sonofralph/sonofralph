@@ -26,6 +26,8 @@ model Organization {
   alerts         Alert[]
   recipes        Recipe[]
   auditLogs      AuditLog[]
+  requisitions   Requisition[]
+  shiftHandovers ShiftHandover[]
 }
 
 model User {
@@ -43,6 +45,9 @@ model User {
   movements                 StockMovement[]
   auditLogs                 AuditLog[]
   notificationPreferences   NotificationPreference[]
+  requisitionsRequested     Requisition[]             @relation("RequisitionRequester")
+  requisitionsReviewed      Requisition[]             @relation("RequisitionReviewer")
+  shiftHandovers            ShiftHandover[]
 }
 
 model NotificationPreference {
@@ -68,6 +73,8 @@ model Location {
   inventoryRecords InventoryRecord[]
   movements        StockMovement[]
   alerts           Alert[]
+  requisitions     Requisition[]
+  shiftHandovers   ShiftHandover[]
 }
 
 model Category {
@@ -102,6 +109,7 @@ model Item {
   alerts             Alert[]
   recipeIngredients  RecipeIngredient[]
   auditLogs          AuditLog[]
+  requisitionLines   RequisitionLine[]
 
   @@unique([sku, organizationId])
 }
@@ -225,6 +233,49 @@ model RecipeIngredient {
 
   recipe Recipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
   item   Item   @relation(fields: [itemId], references: [id])
+}
+
+model Requisition {
+  id             String   @id @default(cuid())
+  organizationId String
+  requestedById  String
+  reviewedById   String?
+  locationId     String
+  status         String   @default("PENDING")
+  notes          String?
+  reviewNote     String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  organization  Organization       @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  requestedBy   User               @relation("RequisitionRequester", fields: [requestedById], references: [id])
+  reviewedBy    User?              @relation("RequisitionReviewer", fields: [reviewedById], references: [id])
+  location      Location           @relation(fields: [locationId], references: [id])
+  lines         RequisitionLine[]
+}
+
+model RequisitionLine {
+  id            String  @id @default(cuid())
+  requisitionId String
+  itemId        String
+  quantity      Float
+  notes         String?
+
+  requisition Requisition @relation(fields: [requisitionId], references: [id], onDelete: Cascade)
+  item        Item        @relation(fields: [itemId], references: [id])
+}
+
+model ShiftHandover {
+  id             String   @id @default(cuid())
+  organizationId String
+  locationId     String
+  userId         String
+  notes          String
+  createdAt      DateTime @default(now())
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  location     Location     @relation(fields: [locationId], references: [id])
+  user         User         @relation(fields: [userId], references: [id])
 }
 
 model AuditLog {
