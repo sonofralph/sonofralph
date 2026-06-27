@@ -40,12 +40,12 @@ export default async function AlertsPage() {
   const user = session.user as SessionUser;
   const orgId = user.organizationId;
 
-  const [openAlerts, resolvedAlerts] = await Promise.all([
+  const [openAlerts, resolvedAlerts, suppliers] = await Promise.all([
     prisma.alert.findMany({
       where: { organizationId: orgId, status: { in: ["OPEN", "ACKNOWLEDGED"] } },
       orderBy: { createdAt: "desc" },
       include: {
-        item: { select: { name: true, sku: true, unit: true } },
+        item: { select: { name: true, sku: true, unit: true, unitCost: true } },
         location: { select: { name: true } },
       },
     }),
@@ -57,6 +57,11 @@ export default async function AlertsPage() {
         item: { select: { name: true, sku: true } },
         location: { select: { name: true } },
       },
+    }),
+    prisma.supplier.findMany({
+      where: { organizationId: orgId },
+      select: { id: true, name: true },
+      orderBy: { name: "asc" },
     }),
   ]);
 
@@ -129,6 +134,11 @@ export default async function AlertsPage() {
                 <AlertActions
                   alertId={alert.id}
                   currentStatus={alert.status as any}
+                  itemId={alert.itemId}
+                  itemName={alert.item.name}
+                  itemUnit={alert.item.unit}
+                  unitCost={alert.item.unitCost}
+                  suppliers={suppliers}
                 />
               </div>
             );
