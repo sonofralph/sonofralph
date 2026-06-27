@@ -33,12 +33,42 @@ const alertTypeBadge: Record<AlertType, any> = {
   EXPIRY: "warning",
 };
 
+async function runExpiryCheck(orgId: string) {
+  const now = new Date();
+  const warnBefore = new Date(now.getTime() + 3 * 24 * 60 * 60 * 1000);
+  const expiring = await prisma.stockMovement.findMany({
+    where: { type: "RECEIPT", expiryDate: { gte: now, lte: warnBefore }, item: { organizationId: orgId } },
+    include: { item: { select: { id: true, name: true, unit: true } }, location: { select: { id: true, name: true } } },
+  });
+  for (const m of expiring) {
+    const exists = await prisma.alert.findFirst({
+      where: { organizationId: orgId, itemId: m.itemId, locationId: m.locationId, type: "EXPIRY", status: { in: ["OPEN", "ACKNOWLEDGED"] } },
+    });
+    if (!exists) {
+      const daysLeft = Math.ceil((m.expiryDate!.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+      await prisma.alert.create({
+        data: {
+          organizationId: orgId,
+          itemId: m.itemId,
+          locationId: m.locationId,
+          type: "EXPIRY",
+          status: "OPEN",
+          message: `${m.item.name} at ${m.location.name} expires in ${daysLeft} day${daysLeft !== 1 ? "s" : ""}.`,
+        },
+      });
+    }
+  }
+}
+
 export default async function AlertsPage() {
   const session = await getServerSession(authOptions);
   if (!session?.user) redirect("/login");
 
   const user = session.user as SessionUser;
   const orgId = user.organizationId;
+
+  // Run expiry check on every page load — lightweight, idempotent
+  await runExpiryCheck(orgId);
 
   const [openAlerts, resolvedAlerts, suppliers] = await Promise.all([
     prisma.alert.findMany({

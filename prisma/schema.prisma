@@ -117,6 +117,7 @@ model StockMovement {
   reference  String?
   notes      String?
   userId     String
+  expiryDate DateTime?
   createdAt  DateTime @default(now())
 
   item     Item     @relation(fields: [itemId], references: [id], onDelete: Cascade)

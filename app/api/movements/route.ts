@@ -15,6 +15,7 @@ const movementSchema = z.object({
   quantity: z.number().positive(),
   reference: z.string().optional(),
   notes: z.string().optional(),
+  expiryDate: z.string().optional(), // ISO date string, overrides auto-calculation
 });
 
 export async function GET(req: Request) {
@@ -72,6 +73,17 @@ export async function POST(req: Request) {
 
     // Run in a transaction: create movement + update inventory record
     const result = await prisma.$transaction(async (tx) => {
+      // Auto-calculate expiry date for RECEIPTs if item has expiryDays
+      let expiryDate: Date | undefined;
+      if (data.type === "RECEIPT") {
+        if (data.expiryDate) {
+          expiryDate = new Date(data.expiryDate);
+        } else if (item.expiryDays) {
+          expiryDate = new Date();
+          expiryDate.setDate(expiryDate.getDate() + item.expiryDays);
+        }
+      }
+
       const movement = await tx.stockMovement.create({
         data: {
           itemId: data.itemId,
@@ -81,6 +93,7 @@ export async function POST(req: Request) {
           reference: data.reference,
           notes: data.notes,
           userId: user.id!,
+          ...(expiryDate && { expiryDate }),
         },
       });
 
