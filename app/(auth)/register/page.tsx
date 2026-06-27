@@ -53,7 +53,7 @@ export default function RegisterPage() {
       });
 
       if (result?.ok) {
-        router.push("/dashboard");
+        router.push("/inventory");
       }
     } catch {
       setError("Something went wrong. Please try again.");
