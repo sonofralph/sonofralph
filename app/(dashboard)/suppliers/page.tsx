@@ -18,6 +18,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { AddSupplierButton } from "./AddSupplierButton";
 import { Mail, Phone, Building } from "lucide-react";
+import Link from "next/link";
 
 export default async function SuppliersPage() {
   const session = await getServerSession(authOptions);
@@ -59,7 +60,8 @@ export default async function SuppliersPage() {
           </div>
         ) : (
           suppliers.map((supplier) => (
-            <Card key={supplier.id} className="hover:shadow-md transition-shadow">
+            <Link key={supplier.id} href={`/suppliers/${supplier.id}`}>
+            <Card className="hover:shadow-md transition-shadow cursor-pointer">
               <CardContent className="p-5">
                 <div className="flex items-start justify-between">
                   <div className="flex-1 min-w-0">
@@ -100,6 +102,7 @@ export default async function SuppliersPage() {
                 </div>
               </CardContent>
             </Card>
+            </Link>
           ))
         )}
       </div>
