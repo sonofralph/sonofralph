@@ -77,8 +77,8 @@ export default async function LocationsPage() {
           </div>
         ) : (
           locations.map((location) => {
-            const Icon = locationIcons[location.type] ?? MapPin;
-            const colorClass = locationColors[location.type] ?? "bg-slate-50 text-slate-600";
+            const Icon = (locationIcons as any)[location.type] ?? MapPin;
+            const colorClass = (locationColors as any)[location.type] ?? "bg-slate-50 text-slate-600";
 
             return (
               <Card

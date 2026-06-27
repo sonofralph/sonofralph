@@ -70,7 +70,7 @@ export function CategoryPieChart({ data }: CategoryChartProps) {
         </Pie>
         <Tooltip
           contentStyle={{ borderRadius: "8px", border: "1px solid #e2e8f0", fontSize: 12 }}
-          formatter={(value: number) => [`${value} items`, ""]}
+          formatter={(value) => [`${value} items`, ""]}
         />
         <Legend
           iconType="circle"

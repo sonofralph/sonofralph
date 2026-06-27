@@ -41,7 +41,7 @@ export default async function SettingsPage() {
     ENTERPRISE: { items: -1, users: -1, locations: -1 },
   };
 
-  const limits = planLimits[org.plan];
+  const limits = planLimits[org.plan as keyof typeof planLimits];
 
   return (
     <div className="space-y-6 max-w-3xl">

@@ -128,7 +128,7 @@ export default async function AlertsPage() {
 
                 <AlertActions
                   alertId={alert.id}
-                  currentStatus={alert.status}
+                  currentStatus={alert.status as any}
                 />
               </div>
             );
