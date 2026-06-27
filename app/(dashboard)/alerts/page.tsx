@@ -85,7 +85,7 @@ export default async function AlertsPage() {
             </p>
           </div>
         ) : (
-          openAlerts.map((alert) => {
+          openAlerts.map((alert: typeof openAlerts[number]) => {
             const Icon = alertTypeIcons[alert.type as AlertType] ?? AlertTriangle;
             const colorClass =
               alertTypeColors[alert.type as AlertType] ?? "text-slate-600 bg-slate-50";
