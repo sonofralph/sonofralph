@@ -178,16 +178,26 @@ export async function POST(req: Request) {
 
     // Send alert email outside transaction — failure must not affect the movement
     if (result.newAlertType) {
+      const alertType = result.newAlertType;
       const admins = await prisma.user.findMany({
         where: { organizationId: user.organizationId, role: { in: ["OWNER", "ADMIN"] } },
-        select: { email: true },
+        select: {
+          email: true,
+          notificationPreferences: { where: { alertType } },
+        },
       });
+      const optedIn = admins
+        .filter((u) => {
+          const pref = u.notificationPreferences[0];
+          return pref ? pref.email : true; // default on
+        })
+        .map((u) => u.email);
       const org = await prisma.organization.findUnique({
         where: { id: user.organizationId },
         select: { name: true },
       });
       sendAlertEmail({
-        to: admins.map((u) => u.email),
+        to: optedIn,
         itemName: item.name,
         locationName: location.name,
         type: result.newAlertType,

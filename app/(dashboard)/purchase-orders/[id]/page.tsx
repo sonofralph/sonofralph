@@ -6,7 +6,7 @@ import { SessionUser } from "@/types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { formatCurrency, formatDate } from "@/lib/utils";
-import { ArrowLeft, Building2, Calendar, Package } from "lucide-react";
+import { ArrowLeft, Building2, Calendar, Package, Printer } from "lucide-react";
 import Link from "next/link";
 import { ReceivePOForm } from "./ReceivePOForm";
 import { cn } from "@/lib/utils";
@@ -57,6 +57,14 @@ export default async function PODetailPage({ params }: { params: Promise<{ id: s
           </div>
           <p className="text-sm text-slate-500">Purchase order details and receiving</p>
         </div>
+        <Link
+          href={`/purchase-orders/${po.id}/print`}
+          target="_blank"
+          className="flex items-center gap-2 rounded-lg border border-slate-200 px-3 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50 transition-colors"
+        >
+          <Printer className="h-4 w-4" />
+          Print
+        </Link>
       </div>
 
       {/* PO metadata */}
