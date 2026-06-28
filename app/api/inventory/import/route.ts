@@ -4,6 +4,7 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { SessionUser } from "@/types";
 import { z } from "zod";
+import { getPlanLimits, isActive } from "@/lib/plans";
 
 const rowSchema = z.object({
   name: z.string().min(1),
@@ -32,6 +33,30 @@ export async function POST(req: Request) {
   try {
     const body = await req.json();
     const { rows } = importSchema.parse(body);
+
+    // Plan limit check: count only new items (not updates) against the limit
+    const org = await prisma.organization.findUnique({
+      where: { id: user.organizationId },
+      select: { plan: true, planStatus: true },
+    });
+    if (org) {
+      const effectivePlan = isActive(org.planStatus) ? org.plan : "FREE";
+      const limit = getPlanLimits(effectivePlan).items;
+      if (limit !== Infinity) {
+        const uniqueSkus = [...new Set(rows.map((r) => r.sku.trim()))];
+        const existingCount = await prisma.item.count({
+          where: { organizationId: user.organizationId, sku: { in: uniqueSkus } },
+        });
+        const newCount = uniqueSkus.length - existingCount;
+        const currentTotal = await prisma.item.count({ where: { organizationId: user.organizationId } });
+        if (currentTotal + newCount > limit) {
+          return NextResponse.json(
+            { error: "PLAN_LIMIT_REACHED", resource: "items", current: currentTotal, limit, upgradeRequired: true },
+            { status: 402 }
+          );
+        }
+      }
+    }
 
     // Resolve or create categories
     const categoryNames = [...new Set(rows.map((r) => r.category.trim()))];

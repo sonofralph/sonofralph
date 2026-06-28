@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma";
 import { SessionUser } from "@/types";
 import { z } from "zod";
 import bcrypt from "bcryptjs";
+import { checkPlanLimit } from "@/lib/plan-gate";
 
 const USER_ROLES = ["OWNER", "ADMIN", "MANAGER", "STAFF"] as const;
 
@@ -25,6 +26,9 @@ export async function POST(req: Request) {
   if (!["OWNER", "ADMIN"].includes(user.role)) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
+
+  const limitHit = await checkPlanLimit(user.organizationId, "users");
+  if (limitHit) return limitHit;
 
   try {
     const body = await req.json();

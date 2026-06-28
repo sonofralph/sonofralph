@@ -22,6 +22,7 @@ import {
 } from "@/components/ui/select";
 import { Plus } from "lucide-react";
 import type { LocationType } from "@/types";
+import { UpgradeModal } from "@/components/ui/UpgradeModal";
 
 const locationTypes: { value: LocationType; label: string }[] = [
   { value: "KITCHEN", label: "Kitchen" },
@@ -47,6 +48,7 @@ export function AddLocationButton() {
   const [error, setError] = useState<string | null>(null);
   const [name, setName] = useState("");
   const [type, setType] = useState<LocationType>("HOTEL");
+  const [upgradeInfo, setUpgradeInfo] = useState<{ current: number; limit: number } | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -59,6 +61,12 @@ export function AddLocationButton() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name, type }),
       });
+      if (res.status === 402) {
+        const body = await res.json();
+        setOpen(false);
+        setUpgradeInfo({ current: body.current, limit: body.limit });
+        return;
+      }
       if (!res.ok) {
         const body = await res.json();
         throw new Error(body.error ?? "Failed to add location");
@@ -74,6 +82,14 @@ export function AddLocationButton() {
   };
 
   return (
+    <>
+    <UpgradeModal
+      open={!!upgradeInfo}
+      onClose={() => setUpgradeInfo(null)}
+      resource="locations"
+      current={upgradeInfo?.current ?? 0}
+      limit={upgradeInfo?.limit ?? 1}
+    />
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button>
@@ -136,5 +152,6 @@ export function AddLocationButton() {
         </form>
       </DialogContent>
     </Dialog>
+    </>
   );
 }

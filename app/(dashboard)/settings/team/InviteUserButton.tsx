@@ -22,6 +22,7 @@ import {
 } from "@/components/ui/select";
 import { UserPlus } from "lucide-react";
 import type { UserRole } from "@/types";
+import { UpgradeModal } from "@/components/ui/UpgradeModal";
 
 export function InviteUserButton() {
   const router = useRouter();
@@ -34,6 +35,7 @@ export function InviteUserButton() {
     password: "",
     role: "STAFF" as UserRole,
   });
+  const [upgradeInfo, setUpgradeInfo] = useState<{ current: number; limit: number } | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -46,6 +48,12 @@ export function InviteUserButton() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
       });
+      if (res.status === 402) {
+        const body = await res.json();
+        setOpen(false);
+        setUpgradeInfo({ current: body.current, limit: body.limit });
+        return;
+      }
       if (!res.ok) {
         const body = await res.json();
         throw new Error(body.error ?? "Failed to add user");
@@ -61,6 +69,14 @@ export function InviteUserButton() {
   };
 
   return (
+    <>
+    <UpgradeModal
+      open={!!upgradeInfo}
+      onClose={() => setUpgradeInfo(null)}
+      resource="users"
+      current={upgradeInfo?.current ?? 0}
+      limit={upgradeInfo?.limit ?? 3}
+    />
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button>
@@ -148,5 +164,6 @@ export function InviteUserButton() {
         </form>
       </DialogContent>
     </Dialog>
+    </>
   );
 }

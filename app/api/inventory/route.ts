@@ -4,6 +4,7 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { SessionUser } from "@/types";
 import { z } from "zod";
+import { checkPlanLimit } from "@/lib/plan-gate";
 
 export async function GET(req: Request) {
   const session = await getServerSession(authOptions);
@@ -66,6 +67,9 @@ export async function POST(req: Request) {
   if (!["OWNER", "ADMIN", "MANAGER"].includes(user.role)) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
+
+  const limitHit = await checkPlanLimit(user.organizationId, "items");
+  if (limitHit) return limitHit;
 
   try {
     const body = await req.json();

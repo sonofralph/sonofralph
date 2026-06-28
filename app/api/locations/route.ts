@@ -4,6 +4,7 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { SessionUser } from "@/types";
 import { z } from "zod";
+import { checkPlanLimit } from "@/lib/plan-gate";
 
 const LOCATION_TYPES = ["HOTEL", "RESTAURANT", "BAR", "KITCHEN", "WAREHOUSE", "EVENT_SPACE"] as const;
 
@@ -37,6 +38,9 @@ export async function POST(req: Request) {
   if (!["OWNER", "ADMIN"].includes(user.role)) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
+
+  const limitHit = await checkPlanLimit(user.organizationId, "locations");
+  if (limitHit) return limitHit;
 
   try {
     const body = await req.json();

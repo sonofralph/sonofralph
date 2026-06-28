@@ -12,6 +12,7 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
+import { UpgradeModal } from "@/components/ui/UpgradeModal";
 
 interface ParsedRow {
   name: string;
@@ -80,6 +81,7 @@ export function ImportModal({ open, onClose }: Props) {
   const [result, setResult] = useState<{ created: number; updated: number } | null>(null);
   const [error, setError] = useState("");
   const [dragging, setDragging] = useState(false);
+  const [upgradeInfo, setUpgradeInfo] = useState<{ current: number; limit: number } | null>(null);
 
   const validRows = rows.filter((r) => !r._error);
   const invalidRows = rows.filter((r) => r._error);
@@ -117,6 +119,12 @@ export function ImportModal({ open, onClose }: Props) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ rows: validRows }),
       });
+      if (res.status === 402) {
+        const data = await res.json();
+        onClose();
+        setUpgradeInfo({ current: data.current, limit: data.limit });
+        return;
+      }
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? "Import failed");
       setResult(data);
@@ -147,6 +155,14 @@ export function ImportModal({ open, onClose }: Props) {
   }
 
   return (
+    <>
+    <UpgradeModal
+      open={!!upgradeInfo}
+      onClose={() => setUpgradeInfo(null)}
+      resource="items"
+      current={upgradeInfo?.current ?? 0}
+      limit={upgradeInfo?.limit ?? 50}
+    />
     <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent className="max-w-2xl">
         <DialogHeader>
@@ -267,5 +283,6 @@ export function ImportModal({ open, onClose }: Props) {
         )}
       </DialogContent>
     </Dialog>
+    </>
   );
 }
