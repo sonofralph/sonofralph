@@ -48,7 +48,7 @@ export function AddLocationButton() {
   const [error, setError] = useState<string | null>(null);
   const [name, setName] = useState("");
   const [type, setType] = useState<LocationType>("HOTEL");
-  const [upgradeInfo, setUpgradeInfo] = useState<{ current: number; limit: number } | null>(null);
+  const [upgradeInfo, setUpgradeInfo] = useState<{ current: number; limit: number; currentPlan: string } | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -64,7 +64,7 @@ export function AddLocationButton() {
       if (res.status === 402) {
         const body = await res.json();
         setOpen(false);
-        setUpgradeInfo({ current: body.current, limit: body.limit });
+        setUpgradeInfo({ current: body.current, limit: body.limit, currentPlan: body.currentPlan ?? "FREE" });
         return;
       }
       if (!res.ok) {
@@ -89,6 +89,7 @@ export function AddLocationButton() {
       resource="locations"
       current={upgradeInfo?.current ?? 0}
       limit={upgradeInfo?.limit ?? 1}
+      currentPlan={upgradeInfo?.currentPlan}
     />
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>

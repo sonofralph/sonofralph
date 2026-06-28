@@ -31,7 +31,7 @@ export async function checkPlanLimit(
 
   if (current + adding > limit) {
     return NextResponse.json(
-      { error: "PLAN_LIMIT_REACHED", resource, current, limit, upgradeRequired: true },
+      { error: "PLAN_LIMIT_REACHED", resource, current, limit, currentPlan: effectivePlan, upgradeRequired: true },
       { status: 402 }
     );
   }

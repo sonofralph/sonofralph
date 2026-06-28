@@ -51,7 +51,7 @@ export async function POST(req: Request) {
         const currentTotal = await prisma.item.count({ where: { organizationId: user.organizationId } });
         if (currentTotal + newCount > limit) {
           return NextResponse.json(
-            { error: "PLAN_LIMIT_REACHED", resource: "items", current: currentTotal, limit, upgradeRequired: true },
+            { error: "PLAN_LIMIT_REACHED", resource: "items", current: currentTotal, limit, currentPlan: effectivePlan, upgradeRequired: true },
             { status: 402 }
           );
         }

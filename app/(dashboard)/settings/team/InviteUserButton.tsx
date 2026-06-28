@@ -35,7 +35,7 @@ export function InviteUserButton() {
     password: "",
     role: "STAFF" as UserRole,
   });
-  const [upgradeInfo, setUpgradeInfo] = useState<{ current: number; limit: number } | null>(null);
+  const [upgradeInfo, setUpgradeInfo] = useState<{ current: number; limit: number; currentPlan: string } | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -51,7 +51,7 @@ export function InviteUserButton() {
       if (res.status === 402) {
         const body = await res.json();
         setOpen(false);
-        setUpgradeInfo({ current: body.current, limit: body.limit });
+        setUpgradeInfo({ current: body.current, limit: body.limit, currentPlan: body.currentPlan ?? "FREE" });
         return;
       }
       if (!res.ok) {
@@ -76,6 +76,7 @@ export function InviteUserButton() {
       resource="users"
       current={upgradeInfo?.current ?? 0}
       limit={upgradeInfo?.limit ?? 3}
+      currentPlan={upgradeInfo?.currentPlan}
     />
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
