@@ -118,7 +118,7 @@ function Preloader({ onDone }: { onDone: () => void }) {
           transition: "opacity 0.5s ease-out 0.1s",
         }}
       >
-        Inventory. Simplified.
+        Everything in its place.
       </div>
 
       {/* Progress sweep */}

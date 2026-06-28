@@ -6,9 +6,9 @@ import { Providers } from "./providers";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Mise — Hospitality Inventory Management",
+  title: "Mise — Everything in its place.",
   description:
-    "Multi-tenant inventory management system for hotels, restaurants, and hospitality businesses.",
+    "Everything in its place. Mise gives hospitality teams real-time inventory visibility across every location, supplier, and item — so you never run out, never over-order, and never lose margin to waste.",
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,

@@ -106,7 +106,7 @@ export const translations: Record<Language, Translations> = {
       ],
     },
     cta: { h2: "Ready to take control of your inventory?", description: "Join hundreds of hospitality teams who trust Mise to run their operations.", button: "Start for free" },
-    footer: { tagline: "Built for hospitality.", privacy: "Privacy", terms: "Terms", contact: "Contact" },
+    footer: { tagline: "Everything in its place.", privacy: "Privacy", terms: "Terms", contact: "Contact" },
   },
 
   fr: {
