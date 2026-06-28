@@ -142,6 +142,10 @@ Run migrations in the `mise` project SQL editor, never the other one.
 | `STRIPE_PUBLISHABLE_KEY` | Stripe publishable (`pk_test_...`) |
 | `STRIPE_WEBHOOK_SECRET` | Webhook signing secret (`whsec_...`) |
 | `STRIPE_PRO_MONTHLY_PRICE_ID` | `price_1TnLcLH1OwMEblijC4kI4tAI` |
+| `RESEND_API_KEY` | Resend API key for transactional email |
+| `ALERT_EMAIL_FROM` | Sending address — default `noreply@mise.app` |
+| `SENTRY_DSN` | Sentry project DSN (from sentry.io project settings) |
+| `SENTRY_AUTH_TOKEN` | Sentry auth token for source map uploads on Vercel |
 
 ---
 
@@ -162,19 +166,19 @@ Run migrations in the `mise` project SQL editor, never the other one.
 - Requisitions
 - Go-live checklist
 
-### V1.1 — Billing + Onboarding (IN PROGRESS 🔄)
+### V1.1 — Billing + Onboarding (SHIPPED ✅)
 - [x] Stripe integration (checkout, portal, webhook)
 - [x] Plan limits defined in `lib/plans.ts`
 - [x] Org size step in onboarding wizard
 - [x] Billing fields migration (planStatus, orgSize, stripeCustomerId, etc.)
-- [ ] Feature gates — enforce plan limits on location/user/item creation APIs
-- [ ] `/settings/billing` page — show plan, upgrade button, portal link
-- [ ] Public pricing page
-- [ ] Rate limiting on API routes
-- [ ] Sentry error tracking
-- [ ] Email delivery via Resend (invite emails, alerts)
-- [ ] Pagination on large list views
-- [ ] GDPR — data export and account deletion
+- [x] Feature gates — enforce plan limits on location/user/item creation APIs
+- [x] `/settings/billing` page — show plan, upgrade button, portal link
+- [x] Public pricing page (`/pricing`)
+- [x] Rate limiting on API routes (`lib/rate-limit.ts`)
+- [x] Email delivery via Resend — invite emails + alert rebrand to Mise
+- [x] Pagination on large list views — movements (50/page), audit (100/page)
+- [x] GDPR — data export (`GET /api/gdpr/export`) and account deletion (`POST /api/gdpr/delete`)
+- [ ] Sentry error tracking ← NEXT
 
 ### V2 — Intelligence & Scale (PLANNED)
 - AI-assisted demand forecasting
@@ -196,9 +200,9 @@ Run migrations in the `mise` project SQL editor, never the other one.
 
 ---
 
-## GTM & Launch Strategy — TO BE DETAILED AT END OF V1 BUILD
+## GTM & Launch Strategy — DELIVER BEFORE GO-LIVE 🚨
 
-**Flagged during V1.1 build — do not skip this before launch.**
+**Formally tracked. Must be delivered before any paid marketing or public launch.**
 
 ### The core problem
 Distribution is the #1 reason SaaS products fail — not product quality.
@@ -219,7 +223,7 @@ Mise V1 already has feature parity or better vs most SMB competitors.
 The gap is not features — it's awareness and trust.
 The 30→70% move is entirely a GTM execution problem, not a build problem.
 
-**ACTION: Deliver full detailed GTM playbook at end of V1 build.**
+**ACTION: Deliver full detailed GTM playbook once V1.1 + Sentry are complete. Covers: ICP, primary channel, positioning, first 10 customers, partnership targets, SEO/content, pricing page conversion. Goal: 30–40% → 70%+ success probability.**
 
 ---
 
