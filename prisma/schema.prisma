@@ -31,6 +31,7 @@ model Organization {
   requisitions   Requisition[]
   shiftHandovers ShiftHandover[]
   comments       Comment[]
+  departments    Department[]
 }
 
 model User {
@@ -70,15 +71,30 @@ model Location {
   name           String
   type           String
   organizationId String
+  departmentId   String?
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 
   organization     Organization      @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  department       Department?       @relation(fields: [departmentId], references: [id], onDelete: SetNull)
   inventoryRecords InventoryRecord[]
   movements        StockMovement[]
   alerts           Alert[]
   requisitions     Requisition[]
   shiftHandovers   ShiftHandover[]
+}
+
+model Department {
+  id             String   @id @default(cuid())
+  name           String
+  organizationId String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  locations    Location[]
+
+  @@unique([name, organizationId])
 }
 
 model Category {

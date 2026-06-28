@@ -46,6 +46,7 @@ const routeLabels: Record<string, string> = {
   "/settings/team": "Team Management",
   "/recipes": "Recipes & Food Cost",
   "/recipes/new": "New Recipe",
+  "/departments": "Departments",
   "/audit": "Audit Log",
   "/reorder": "Reorder Suggestions",
   "/stocktake": "Stocktake",
