@@ -31,7 +31,7 @@ Every feature and decision is evaluated through these six lenses in order:
 
 1. **Business** — revenue impact, market positioning, competitive advantage
 2. **Development & Security** — implementation complexity, security posture, technical debt
-3. **Marketing / Marketable** — is this a selling point? can we demo it?
+3. **Marketing Expert** — does this move the needle on acquisition, retention, or perception? would a growth marketer fight for this feature?
 4. **Customer / Client / End User** — ease of use, low-tech accessibility, workflow fit
 5. **Product** — does it make the product coherent and complete?
 6. **Investor / Acquirer** — would this make the business more valuable or attractive to acquire?

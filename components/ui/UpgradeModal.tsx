@@ -86,11 +86,10 @@ export function UpgradeModal({ open, onClose, resource, current, limit, currentP
           </DialogHeader>
           <div className="space-y-2 text-sm text-slate-600">
             <p>
-              Your organisation has reached its plan limit for{" "}
-              {copy.noun}s.
+              Your organisation has reached its plan limit for {copy.noun}s.
             </p>
             <p>
-              To add more, ask your <strong>Owner</strong> or{" "}
+              To unlock more, ask your <strong>Owner</strong> or{" "}
               <strong>Admin</strong> to upgrade the plan.
             </p>
           </div>
@@ -110,21 +109,23 @@ export function UpgradeModal({ open, onClose, resource, current, limit, currentP
             <div className="flex h-10 w-10 items-center justify-center rounded-full bg-amber-100 mb-3">
               <Zap className="h-5 w-5 text-amber-600" />
             </div>
-            <DialogTitle>Scale to Enterprise</DialogTitle>
+            <DialogTitle>You&apos;ve outgrown Pro — that&apos;s the point.</DialogTitle>
           </DialogHeader>
 
           <div className="space-y-3 text-sm text-slate-600">
             <p>
-              You&apos;ve reached the <strong>Pro plan limit</strong> of {limit}{" "}
-              {copy.noun}{limit !== 1 ? "s" : ""} — your operation is growing.
+              {limit} {copy.noun}{limit !== 1 ? "s" : ""} was always the ceiling,
+              not the destination. The operations that get here are the ones
+              worth building for.
             </p>
             <p>
-              <strong>Mise Enterprise</strong> gives you {copy.enterpriseUnlock},
-              unlimited team members, dedicated onboarding, and custom pricing
-              built around your group.
+              <strong>Mise Enterprise</strong> removes every limit —{" "}
+              {copy.enterpriseUnlock}, unlimited team members, dedicated
+              onboarding, and pricing structured around how your group actually
+              operates. Not a tier. A partnership.
             </p>
-            <p>
-              Get in touch and we&apos;ll have you set up within 24 hours.
+            <p className="font-medium text-slate-800">
+              One conversation. We&apos;ll have you running within 24 hours.
             </p>
             {error && <p className="text-red-600 text-xs">{error}</p>}
           </div>
@@ -134,11 +135,11 @@ export function UpgradeModal({ open, onClose, resource, current, limit, currentP
               Manage current plan
             </Button>
             <a
-              href={`mailto:${ENTERPRISE_CONTACT}?subject=Mise Enterprise enquiry&body=Hi, I'm on the Pro plan and I'd like to learn more about Enterprise.`}
+              href={`mailto:${ENTERPRISE_CONTACT}?subject=Mise Enterprise — let%27s talk&body=Hi%2C%20I%27m%20on%20the%20Pro%20plan%20and%20ready%20to%20explore%20Enterprise.`}
               className="inline-flex items-center justify-center rounded-md bg-amber-500 hover:bg-amber-600 text-white text-sm font-medium px-4 py-2 transition-colors"
               onClick={onClose}
             >
-              Talk to us <ArrowRight className="ml-2 h-4 w-4" />
+              Start the conversation <ArrowRight className="ml-2 h-4 w-4" />
             </a>
           </DialogFooter>
         </DialogContent>
