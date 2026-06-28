@@ -32,7 +32,7 @@ export default withSentryConfig(nextConfig, {
   silent: !process.env.CI,
   org: process.env.SENTRY_ORG,
   project: process.env.SENTRY_PROJECT,
-  hideSourceMaps: true,
+  sourcemaps: { deleteSourcemapsAfterUpload: true },
   disableLogger: true,
   automaticVercelMonitors: true,
 });

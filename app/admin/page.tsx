@@ -1,5 +1,12 @@
 import { prisma } from "@/lib/prisma";
 
+type PlanGroup      = { plan: string; _count: { plan: number } };
+type StatusGroup    = { planStatus: string; _count: { planStatus: number } };
+type BizGroup       = { businessType: string; _count: { businessType: number } };
+type SizeGroup      = { orgSize: string | null; _count: { orgSize: number } };
+type ActionGroup    = { action: string; _count: { action: number } };
+type RecentOrg      = { id: string; name: string; plan: string; planStatus: string; businessType: string; createdAt: Date };
+
 function StatCard({ label, value, sub }: { label: string; value: string | number; sub?: string }) {
   return (
     <div className="rounded-xl border border-slate-700 bg-slate-800 p-5">
@@ -27,18 +34,7 @@ export default async function AdminPage() {
   const now = new Date();
   const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
 
-  const [
-    totalOrgs,
-    totalUsers,
-    byPlan,
-    byPlanStatus,
-    byBusinessType,
-    byOrgSize,
-    recentOrgs,
-    topActions,
-    newOrgsThisMonth,
-    trialOrgs,
-  ] = await Promise.all([
+  const results = (await Promise.all([
     prisma.organization.count(),
     prisma.user.count(),
     prisma.organization.groupBy({ by: ["plan"], _count: { plan: true } }),
@@ -58,15 +54,17 @@ export default async function AdminPage() {
     }),
     prisma.organization.count({ where: { createdAt: { gte: thirtyDaysAgo } } }),
     prisma.organization.count({ where: { planStatus: "TRIALING" } }),
-  ]);
+  ])) as unknown as [number, number, PlanGroup[], StatusGroup[], BizGroup[], SizeGroup[], RecentOrg[], ActionGroup[], number, number];
 
-  const activeProOrgs = byPlan.find((b) => b.plan === "PRO")?._count.plan ?? 0;
+  const [totalOrgs, totalUsers, byPlan, byPlanStatus, byBusinessType, byOrgSize, recentOrgs, topActions, newOrgsThisMonth, trialOrgs] = results;
+
+  const activeProOrgs = byPlan.find((b: PlanGroup) => b.plan === "PRO")?._count.plan ?? 0;
   const mrrEstimate = activeProOrgs * 49;
 
-  const planMap = Object.fromEntries(byPlan.map((b) => [b.plan, b._count.plan]));
-  const statusMap = Object.fromEntries(byPlanStatus.map((b) => [b.planStatus, b._count.planStatus]));
-  const maxBizCount = Math.max(...byBusinessType.map((b) => b._count.businessType), 1);
-  const maxActionCount = Math.max(...topActions.map((a) => a._count.action), 1);
+  const planMap = Object.fromEntries(byPlan.map((b: PlanGroup) => [b.plan, b._count.plan]));
+  const statusMap = Object.fromEntries(byPlanStatus.map((b: StatusGroup) => [b.planStatus, b._count.planStatus]));
+  const maxBizCount = Math.max(...byBusinessType.map((b: BizGroup) => b._count.businessType), 1);
+  const maxActionCount = Math.max(...topActions.map((a: ActionGroup) => a._count.action), 1);
 
   const PLAN_COLORS: Record<string, string> = {
     FREE: "bg-slate-500",
@@ -122,7 +120,7 @@ export default async function AdminPage() {
         <div className="rounded-xl border border-slate-700 bg-slate-800 p-5 space-y-4">
           <h2 className="text-sm font-bold text-slate-300 uppercase tracking-widest">By Size</h2>
           <div className="space-y-3">
-            {byOrgSize.map((s) => (
+            {byOrgSize.map((s: SizeGroup) => (
               <BarRow key={s.orgSize ?? "unknown"} label={s.orgSize ?? "Not set"} value={s._count.orgSize} max={totalOrgs} />
             ))}
           </div>
@@ -134,7 +132,7 @@ export default async function AdminPage() {
         <div className="rounded-xl border border-slate-700 bg-slate-800 p-5 space-y-4">
           <h2 className="text-sm font-bold text-slate-300 uppercase tracking-widest">Business Types</h2>
           <div className="space-y-3">
-            {byBusinessType.map((b) => (
+            {byBusinessType.map((b: BizGroup) => (
               <BarRow key={b.businessType} label={b.businessType} value={b._count.businessType} max={maxBizCount} color="bg-violet-500" />
             ))}
           </div>
@@ -145,7 +143,7 @@ export default async function AdminPage() {
           <h2 className="text-sm font-bold text-slate-300 uppercase tracking-widest">Most Used Features</h2>
           <p className="text-xs text-slate-500">By audit log action count (all-time)</p>
           <div className="space-y-3">
-            {topActions.map((a) => (
+            {topActions.map((a: ActionGroup) => (
               <BarRow key={a.action} label={a.action} value={a._count.action} max={maxActionCount} color="bg-emerald-500" />
             ))}
           </div>
@@ -167,7 +165,7 @@ export default async function AdminPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-700/50">
-              {recentOrgs.map((org) => (
+              {recentOrgs.map((org: RecentOrg) => (
                 <tr key={org.id} className="text-slate-300">
                   <td className="py-2.5 pr-4 font-medium text-white">{org.name}</td>
                   <td className="py-2.5 pr-4 text-xs">{org.businessType}</td>
