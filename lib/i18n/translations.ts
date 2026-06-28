@@ -68,7 +68,7 @@ export const translations: Record<Language, Translations> = {
     hero: {
       badge: "Built for hospitality — hotels, restaurants, catering",
       h1Line1: "Inventory that runs",
-      h1Line2: "as fast as your kitchen",
+      h1Line2: "as fast as your service",
       description: "Mise gives your team real-time visibility into every item, location, and supplier — so you never run out, never over-order, and never lose margin to waste.",
       ctaPrimary: "Get started free",
       ctaSecondary: "Sign in to your account",
@@ -114,7 +114,7 @@ export const translations: Record<Language, Translations> = {
     hero: {
       badge: "Conçu pour l'hôtellerie — hôtels, restaurants, traiteurs",
       h1Line1: "Un inventaire qui tourne",
-      h1Line2: "aussi vite que votre cuisine",
+      h1Line2: "aussi vite que votre service",
       description: "Mise donne à votre équipe une visibilité en temps réel sur chaque article, lieu et fournisseur — pour ne jamais manquer de stock, ne jamais sur-commander, et ne jamais perdre de marge.",
       ctaPrimary: "Commencer gratuitement",
       ctaSecondary: "Se connecter à votre compte",
@@ -160,7 +160,7 @@ export const translations: Record<Language, Translations> = {
     hero: {
       badge: "Diseñado para la hostelería — hoteles, restaurantes, catering",
       h1Line1: "Inventario que funciona",
-      h1Line2: "tan rápido como tu cocina",
+      h1Line2: "tan rápido como tu servicio",
       description: "Mise da a tu equipo visibilidad en tiempo real de cada artículo, ubicación y proveedor — para que nunca te quedes sin stock, nunca hagas pedidos de más, y nunca pierdas margen por desperdicio.",
       ctaPrimary: "Empieza gratis",
       ctaSecondary: "Iniciar sesión en tu cuenta",
@@ -206,7 +206,7 @@ export const translations: Record<Language, Translations> = {
     hero: {
       badge: "مصمم للضيافة — الفنادق والمطاعم وخدمات التموين",
       h1Line1: "مخزون يعمل",
-      h1Line2: "بسرعة مطبخك",
+      h1Line2: "بسرعة خدمتك",
       description: "يمنح Mise فريقك رؤية فورية لكل عنصر وموقع ومورد — حتى لا تنفد المخزونات أبداً، ولا تطلب أكثر من اللازم، ولا تخسر هامشاً بسبب الهدر.",
       ctaPrimary: "ابدأ مجاناً",
       ctaSecondary: "تسجيل الدخول إلى حسابك",
@@ -252,7 +252,7 @@ export const translations: Record<Language, Translations> = {
     hero: {
       badge: "Imejengwa kwa ukarimu — hoteli, migahawa, upishi",
       h1Line1: "Orodha inayofanya kazi",
-      h1Line2: "haraka kama jikoni lako",
+      h1Line2: "haraka kama huduma yako",
       description: "Mise inapa timu yako uonekano wa wakati halisi wa kila bidhaa, mahali na msambazaji — ili usikose hifadhi kamwe, usiagize kupita kiasi, wala kupoteza faida kwa upotevu.",
       ctaPrimary: "Anza Bure",
       ctaSecondary: "Ingia kwenye akaunti yako",
@@ -298,7 +298,7 @@ export const translations: Record<Language, Translations> = {
     hero: {
       badge: "Construído para hotelaria — hotéis, restaurantes, catering",
       h1Line1: "Inventário que funciona",
-      h1Line2: "tão rápido quanto a sua cozinha",
+      h1Line2: "tão rápido quanto o seu serviço",
       description: "O Mise dá à sua equipe visibilidade em tempo real de cada item, local e fornecedor — para que nunca fique sem estoque, nunca peça em excesso, e nunca perca margem com desperdício.",
       ctaPrimary: "Comece grátis",
       ctaSecondary: "Entrar na sua conta",
@@ -344,7 +344,7 @@ export const translations: Record<Language, Translations> = {
     hero: {
       badge: "Entwickelt für das Gastgewerbe — Hotels, Restaurants, Catering",
       h1Line1: "Inventar, das läuft",
-      h1Line2: "so schnell wie Ihre Küche",
+      h1Line2: "so schnell wie Ihr Service",
       description: "Mise gibt Ihrem Team Echtzeittransparenz über jeden Artikel, Standort und Lieferanten — damit Sie nie den Bestand aufbrauchen, nie zu viel bestellen und nie Marge durch Verschwendung verlieren.",
       ctaPrimary: "Kostenlos starten",
       ctaSecondary: "In Ihren Account einloggen",
@@ -390,7 +390,7 @@ export const translations: Record<Language, Translations> = {
     hero: {
       badge: "专为酒店业打造 — 酒店、餐厅、餐饮",
       h1Line1: "库存管理",
-      h1Line2: "与您的厨房一样高效",
+      h1Line2: "与您的服务一样高效",
       description: "Mise 为您的团队提供每件物品、每个地点和每位供应商的实时可见性 — 让您永不断货、永不过量订购、永不因浪费而损失利润。",
       ctaPrimary: "免费开始",
       ctaSecondary: "登录您的账户",

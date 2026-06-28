@@ -9,6 +9,8 @@ import {
 import { translations, languages, type Language } from "@/lib/i18n/translations";
 
 const STORAGE_KEY = "mise-lang";
+const INTRO_KEY = "mise-intro-ts";
+const INTRO_TTL = 24 * 60 * 60 * 1000; // 24 hours
 
 // ─── Language Switcher ────────────────────────────────────────────────────────
 
@@ -188,20 +190,24 @@ export default function LandingPageClient() {
   const [lang, setLangState] = useState<Language>("en");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [preloaderDone, setPreloaderDone] = useState(false);
-  const [showPreloader, setShowPreloader] = useState(true);
+  // Start hidden — useEffect decides whether to show based on 24h TTL
+  const [showPreloader, setShowPreloader] = useState(false);
 
   useEffect(() => {
-    // Skip preloader if seen this session
-    if (sessionStorage.getItem("mise-intro") === "1") {
-      setPreloaderDone(true);
-      setShowPreloader(false);
-    }
     const saved = localStorage.getItem(STORAGE_KEY) as Language | null;
     if (saved && languages.find((l) => l.code === saved)) setLangState(saved);
+
+    const lastSeen = localStorage.getItem(INTRO_KEY);
+    const shouldShow = !lastSeen || Date.now() - parseInt(lastSeen, 10) > INTRO_TTL;
+    if (shouldShow) {
+      setShowPreloader(true); // mount preloader — it will call onDone when done
+    } else {
+      setPreloaderDone(true); // skip preloader, let hero animate in immediately
+    }
   }, []);
 
   const handlePreloaderDone = useCallback(() => {
-    sessionStorage.setItem("mise-intro", "1");
+    localStorage.setItem(INTRO_KEY, Date.now().toString());
     setPreloaderDone(true);
     setTimeout(() => setShowPreloader(false), 800);
   }, []);
@@ -452,7 +458,7 @@ export default function LandingPageClient() {
                     <p className={`text-sm font-semibold ${highlight ? "text-indigo-200" : "text-slate-500"}`}>{plan.name}</p>
                     <div className="mt-2 flex items-end gap-1">
                       <span className={`text-4xl font-extrabold ${highlight ? "text-white" : "text-slate-900"}`}>
-                        {i === 0 ? "$0" : i === 1 ? "$49" : t.pricing.plans[2].name}
+                        {i === 0 ? "$0" : i === 1 ? "$49" : "Custom"}
                       </span>
                       <span className={`mb-1 text-sm ${highlight ? "text-indigo-200" : "text-slate-400"}`}>/{plan.period}</span>
                     </div>

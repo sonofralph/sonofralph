@@ -52,6 +52,14 @@ export async function POST(req: Request) {
     const body = await req.json();
     const data = poSchema.parse(body);
 
+    // Verify supplier belongs to this org
+    const supplier = await prisma.supplier.findFirst({
+      where: { id: data.supplierId, organizationId: user.organizationId },
+    });
+    if (!supplier) {
+      return NextResponse.json({ error: "Supplier not found" }, { status: 404 });
+    }
+
     const totalAmount = data.lines.reduce(
       (s, l) => s + l.quantity * l.unitCost,
       0

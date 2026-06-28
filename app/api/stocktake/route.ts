@@ -37,6 +37,25 @@ export async function POST(req: Request) {
   });
   if (!location) return NextResponse.json({ error: "Location not found" }, { status: 404 });
 
+  // Verify every itemId and recordId belongs to this org before touching the DB
+  const itemIds = counts.map((c) => c.itemId);
+  const orgItems = await prisma.item.findMany({
+    where: { id: { in: itemIds }, organizationId: user.organizationId },
+    select: { id: true },
+  });
+  if (orgItems.length !== itemIds.length) {
+    return NextResponse.json({ error: "One or more items not found" }, { status: 404 });
+  }
+
+  const recordIds = counts.map((c) => c.recordId);
+  const orgRecords = await prisma.inventoryRecord.findMany({
+    where: { id: { in: recordIds }, item: { organizationId: user.organizationId } },
+    select: { id: true },
+  });
+  if (orgRecords.length !== recordIds.length) {
+    return NextResponse.json({ error: "One or more inventory records not found" }, { status: 404 });
+  }
+
   const discrepancies = counts.filter((c) => c.physicalQty !== c.currentQty);
   if (discrepancies.length === 0) {
     return NextResponse.json({ adjustments: 0, message: "No discrepancies found" });

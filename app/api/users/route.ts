@@ -35,7 +35,7 @@ export async function POST(req: Request) {
     });
     if (existing) {
       return NextResponse.json(
-        { error: "Email already in use" },
+        { error: "Unable to add this email address" },
         { status: 409 }
       );
     }
