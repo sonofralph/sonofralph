@@ -15,7 +15,9 @@ const movementSchema = z.object({
   quantity: z.number().positive(),
   reference: z.string().optional(),
   notes: z.string().optional(),
-  expiryDate: z.string().optional(), // ISO date string, overrides auto-calculation
+  expiryDate: z.string().optional(),
+  batchNumber: z.string().optional(),
+  lotNumber: z.string().optional(),
 });
 
 export async function GET(req: Request) {
@@ -94,6 +96,8 @@ export async function POST(req: Request) {
           notes: data.notes,
           userId: user.id!,
           ...(expiryDate && { expiryDate }),
+          ...(data.batchNumber && { batchNumber: data.batchNumber }),
+          ...(data.lotNumber && { lotNumber: data.lotNumber }),
         },
       });
 

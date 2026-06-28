@@ -23,6 +23,7 @@ interface Props {
     unitCost: number;
     expiryDays: number | null;
     categoryId: string;
+    trackingType: string;
   };
   categories: Category[];
   canEdit: boolean;
@@ -41,6 +42,7 @@ export function EditItemForm({ itemId, defaultValues, categories, canEdit, canDe
   const [unitCost, setUnitCost] = useState(defaultValues.unitCost);
   const [expiryDays, setExpiryDays] = useState(defaultValues.expiryDays?.toString() ?? "");
   const [categoryId, setCategoryId] = useState(defaultValues.categoryId);
+  const [trackingType, setTrackingType] = useState(defaultValues.trackingType ?? "CONSUMABLE");
 
   async function handleSave(e: React.FormEvent) {
     e.preventDefault();
@@ -57,6 +59,7 @@ export function EditItemForm({ itemId, defaultValues, categories, canEdit, canDe
         unitCost,
         categoryId,
         expiryDays: expiryDays ? parseInt(expiryDays) : null,
+        trackingType,
       }),
     });
     if (res.ok) {
@@ -123,7 +126,7 @@ export function EditItemForm({ itemId, defaultValues, categories, canEdit, canDe
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-3 gap-4">
             <div className="space-y-1.5">
               <Label>Unit cost ($)</Label>
               <Input
@@ -145,6 +148,19 @@ export function EditItemForm({ itemId, defaultValues, categories, canEdit, canDe
                 placeholder="e.g. 7"
                 disabled={!canEdit}
               />
+            </div>
+            <div className="space-y-1.5">
+              <Label>Tracking type</Label>
+              <select
+                className="w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 disabled:bg-slate-50 disabled:text-slate-500"
+                value={trackingType}
+                onChange={(e) => setTrackingType(e.target.value)}
+                disabled={!canEdit}
+              >
+                <option value="CONSUMABLE">Consumable</option>
+                <option value="REUSABLE">Reusable</option>
+                <option value="ASSET">Asset</option>
+              </select>
             </div>
           </div>
 

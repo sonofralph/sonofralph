@@ -112,6 +112,7 @@ export default async function ItemDetailPage({
           unitCost: item.unitCost,
           expiryDays: item.expiryDays ?? null,
           categoryId: item.categoryId,
+          trackingType: item.trackingType ?? "CONSUMABLE",
         }}
         categories={categories}
         canEdit={canEdit}

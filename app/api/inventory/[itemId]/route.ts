@@ -13,6 +13,7 @@ const patchSchema = z.object({
   unitCost: z.number().min(0).optional(),
   expiryDays: z.number().int().positive().nullable().optional(),
   categoryId: z.string().min(1).optional(),
+  trackingType: z.enum(["CONSUMABLE", "REUSABLE", "ASSET"]).optional(),
 });
 
 export async function PATCH(

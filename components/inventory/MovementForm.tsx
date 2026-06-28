@@ -25,6 +25,8 @@ const movementSchema = z.object({
   quantity: z.number().positive("Quantity must be positive"),
   reference: z.string().optional(),
   notes: z.string().optional(),
+  batchNumber: z.string().optional(),
+  lotNumber: z.string().optional(),
 });
 
 interface MovementFormProps {
@@ -54,6 +56,8 @@ export function MovementForm({ items, locations, onSuccess }: MovementFormProps)
     quantity: "",
     reference: "",
     notes: "",
+    batchNumber: "",
+    lotNumber: "",
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -96,6 +100,8 @@ export function MovementForm({ items, locations, onSuccess }: MovementFormProps)
         quantity: "",
         reference: "",
         notes: "",
+        batchNumber: "",
+        lotNumber: "",
       });
       router.refresh();
       onSuccess?.();
@@ -207,6 +213,27 @@ export function MovementForm({ items, locations, onSuccess }: MovementFormProps)
         />
       </div>
 
+      {form.type === "RECEIPT" && (
+        <div className="grid grid-cols-2 gap-4">
+          <div className="space-y-1.5">
+            <Label>Batch No. <span className="text-slate-400 font-normal">— optional</span></Label>
+            <Input
+              placeholder="e.g. B2024-01"
+              value={form.batchNumber}
+              onChange={(e) => setForm((f) => ({ ...f, batchNumber: e.target.value }))}
+            />
+          </div>
+          <div className="space-y-1.5">
+            <Label>Lot / Expiry Code <span className="text-slate-400 font-normal">— optional</span></Label>
+            <Input
+              placeholder="e.g. LOT-A12"
+              value={form.lotNumber}
+              onChange={(e) => setForm((f) => ({ ...f, lotNumber: e.target.value }))}
+            />
+          </div>
+        </div>
+      )}
+
       <div className="space-y-1.5">
         <Label>Notes</Label>
         <Textarea
@@ -229,6 +256,8 @@ export function MovementForm({ items, locations, onSuccess }: MovementFormProps)
               quantity: "",
               reference: "",
               notes: "",
+              batchNumber: "",
+              lotNumber: "",
             })
           }
         >

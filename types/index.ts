@@ -27,7 +27,7 @@ export type {
 };
 
 export type UserRole = "OWNER" | "ADMIN" | "MANAGER" | "STAFF";
-export type LocationType = "HOTEL" | "RESTAURANT" | "BAR" | "KITCHEN" | "WAREHOUSE" | "EVENT_SPACE";
+export type LocationType = "HOTEL" | "RESTAURANT" | "BAR" | "KITCHEN" | "WAREHOUSE" | "EVENT_SPACE" | "HOUSEKEEPING" | "LAUNDRY" | "CELLAR" | "STORAGE" | "FREEZER" | "PHARMACY" | "WARD" | "OTHER";
 export type MovementType = "RECEIPT" | "ISSUE" | "TRANSFER" | "ADJUSTMENT" | "WASTAGE";
 export type POStatus = "DRAFT" | "SENT" | "PARTIAL" | "RECEIVED" | "CANCELLED";
 export type AlertType = "LOW_STOCK" | "OUT_OF_STOCK" | "EXPIRY";

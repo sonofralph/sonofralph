@@ -53,6 +53,7 @@ const itemSchema = z.object({
   minStock: z.number().default(0),
   maxStock: z.number().default(100),
   reorderPoint: z.number().default(10),
+  trackingType: z.enum(["CONSUMABLE", "REUSABLE", "ASSET"]).default("CONSUMABLE"),
 });
 
 export async function POST(req: Request) {
@@ -77,6 +78,7 @@ export async function POST(req: Request) {
           sku: data.sku,
           description: data.description,
           unit: data.unit,
+          trackingType: data.trackingType,
           organizationId: user.organizationId,
           categoryId: data.categoryId,
         },

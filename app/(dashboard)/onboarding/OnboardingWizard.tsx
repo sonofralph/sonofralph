@@ -37,8 +37,8 @@ const BUSINESS_TYPES = [
     presets: [
       { name: "Main Kitchen", type: "KITCHEN" },
       { name: "Bar & Lounge", type: "BAR" },
-      { name: "Housekeeping Store", type: "STORAGE" },
-      { name: "Events & Banqueting", type: "OTHER" },
+      { name: "Housekeeping Store", type: "HOUSEKEEPING" },
+      { name: "Events & Banqueting", type: "EVENT_SPACE" },
     ],
   },
   {
@@ -80,14 +80,14 @@ const BUSINESS_TYPES = [
     description: "Medical facility or pharmacy",
     icon: Stethoscope,
     presets: [
-      { name: "Pharmacy", type: "STORAGE" },
+      { name: "Pharmacy / Dispensary", type: "PHARMACY" },
       { name: "Main Store", type: "STORAGE" },
-      { name: "Ward Store", type: "OTHER" },
+      { name: "Ward Store", type: "WARD" },
     ],
   },
 ] as const;
 
-const LOCATION_TYPES = ["KITCHEN", "BAR", "STORAGE", "CELLAR", "FREEZER", "OTHER"] as const;
+const LOCATION_TYPES = ["KITCHEN", "BAR", "CELLAR", "STORAGE", "FREEZER", "HOUSEKEEPING", "LAUNDRY", "PHARMACY", "WARD", "EVENT_SPACE", "OTHER"] as const;
 const ITEM_UNITS = ["kg", "g", "litre", "ml", "each", "bottle", "case", "box", "portion"];
 
 interface LocationDraft { name: string; type: string }

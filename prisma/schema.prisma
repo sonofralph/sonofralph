@@ -100,6 +100,7 @@ model Item {
   unit           String
   unitCost       Float    @default(0)
   expiryDays     Int?
+  trackingType   String   @default("CONSUMABLE")
   organizationId String
   categoryId     String
   createdAt      DateTime @default(now())
@@ -136,16 +137,18 @@ model InventoryRecord {
 }
 
 model StockMovement {
-  id         String   @id @default(cuid())
-  itemId     String
-  locationId String
-  type       String
-  quantity   Float
-  reference  String?
-  notes      String?
-  userId     String
-  expiryDate DateTime?
-  createdAt  DateTime @default(now())
+  id          String   @id @default(cuid())
+  itemId      String
+  locationId  String
+  type        String
+  quantity    Float
+  reference   String?
+  notes       String?
+  userId      String
+  expiryDate  DateTime?
+  batchNumber String?
+  lotNumber   String?
+  createdAt   DateTime @default(now())
 
   item     Item     @relation(fields: [itemId], references: [id], onDelete: Cascade)
   location Location @relation(fields: [locationId], references: [id], onDelete: Cascade)

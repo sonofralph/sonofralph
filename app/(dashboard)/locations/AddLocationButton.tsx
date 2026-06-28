@@ -24,12 +24,20 @@ import { Plus } from "lucide-react";
 import type { LocationType } from "@/types";
 
 const locationTypes: { value: LocationType; label: string }[] = [
-  { value: "HOTEL", label: "Hotel" },
-  { value: "RESTAURANT", label: "Restaurant" },
-  { value: "BAR", label: "Bar" },
   { value: "KITCHEN", label: "Kitchen" },
+  { value: "BAR", label: "Bar" },
+  { value: "CELLAR", label: "Cellar" },
+  { value: "STORAGE", label: "Storage / Dry Store" },
+  { value: "FREEZER", label: "Freezer / Cold Store" },
   { value: "WAREHOUSE", label: "Warehouse" },
+  { value: "HOUSEKEEPING", label: "Housekeeping" },
+  { value: "LAUNDRY", label: "Laundry" },
+  { value: "PHARMACY", label: "Pharmacy / Dispensary" },
+  { value: "WARD", label: "Ward / Station" },
+  { value: "RESTAURANT", label: "Restaurant" },
+  { value: "HOTEL", label: "Hotel" },
   { value: "EVENT_SPACE", label: "Event Space" },
+  { value: "OTHER", label: "Other" },
 ];
 
 export function AddLocationButton() {
