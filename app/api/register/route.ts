@@ -1,8 +1,9 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
 import { slugify } from "@/lib/utils";
+import { rateLimit } from "@/lib/rate-limit";
 
 const registerSchema = z.object({
   orgName: z.string().min(2, "Organization name is required"),
@@ -11,7 +12,10 @@ const registerSchema = z.object({
   password: z.string().min(8, "Password must be at least 8 characters"),
 });
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
+  const limited = rateLimit(req, "register", { limit: 5, windowSecs: 900 });
+  if (limited) return limited;
+
   try {
     const body = await req.json();
     const data = registerSchema.parse(body);

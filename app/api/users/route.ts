@@ -6,6 +6,7 @@ import { SessionUser } from "@/types";
 import { z } from "zod";
 import bcrypt from "bcryptjs";
 import { checkPlanLimit } from "@/lib/plan-gate";
+import { sendInviteEmail } from "@/lib/email";
 
 const USER_ROLES = ["OWNER", "ADMIN", "MANAGER", "STAFF"] as const;
 
@@ -50,6 +51,11 @@ export async function POST(req: Request) {
     const role =
       user.role !== "OWNER" && data.role === "OWNER" ? "ADMIN" : data.role;
 
+    const org = await prisma.organization.findUnique({
+      where: { id: user.organizationId },
+      select: { name: true },
+    });
+
     const newUser = await prisma.user.create({
       data: {
         name: data.name,
@@ -60,6 +66,15 @@ export async function POST(req: Request) {
       },
       select: { id: true, name: true, email: true, role: true, createdAt: true },
     });
+
+    // Non-blocking — invite email failure must not fail the API response
+    sendInviteEmail({
+      to: data.email,
+      recipientName: data.name,
+      inviterName: user.name ?? user.email,
+      orgName: org?.name ?? "your organization",
+      temporaryPassword: data.password,
+    }).catch(() => {});
 
     return NextResponse.json(newUser, { status: 201 });
   } catch (err) {
