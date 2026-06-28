@@ -1,47 +1,68 @@
-# Stockwise — Hospitality Inventory Management System
+# Mise — Hospitality Inventory Management
 
-A multi-tenant, production-ready SaaS inventory management platform built for hotels, restaurants, bars, and hospitality businesses.
+A multi-tenant SaaS platform for inventory and operations management across hospitality businesses — hotels, restaurants, bars, cafés, catering companies, and clinics.
 
-## Features
+**Live:** https://mise-alpha-rose.vercel.app
 
-- **Multi-tenant** — isolated organizations, each with their own data
-- **Role-based access control** — Owner, Admin, Manager, Staff
-- **Inventory tracking** — stock levels by item and location, with color-coded status
-- **Stock movements** — receipt, issue, transfer, adjustment, wastage with full audit trail
-- **Purchase orders** — create, send, receive (partial/full), auto-update inventory
-- **Supplier management** — contact directory with PO history
-- **Location management** — hotel, restaurant, bar, kitchen, warehouse, event space
+---
+
+## What it does
+
+- **Inventory tracking** — stock levels by item and location, colour-coded status
+- **Stock movements** — receive, issue, transfer, adjust, wastage with full audit trail
+- **Purchase orders** — full lifecycle (draft → sent → received), partial receipt support
+- **Departments** — organisational structure with exclusive location ownership for P&L accountability
+- **Recipes** — ingredient-level costing and yield tracking
+- **Requisitions** — cross-department stock requests and approvals
+- **Shift handovers** — structured end-of-shift notes and checklists
 - **Alerts** — automatic low-stock and out-of-stock notifications
-- **Reports** — movement analytics, top-consumed items, category breakdown
-- **Self-hostable** — Docker + docker-compose for on-premise deployment
+- **Reports** — movement analytics, top-consumed items, category breakdown, wastage trends
+- **Audit log** — every action recorded with user, timestamp, and change detail
+- **Billing** — Stripe-powered subscription with free trial (PRO tier)
+
+---
 
 ## Stack
 
-- **Next.js 14** (App Router, Server Components)
-- **TypeScript** — strict end-to-end types
-- **Tailwind CSS** + **shadcn/ui** components
-- **Prisma ORM** (v7 with pg adapter)
-- **NextAuth.js** (credentials provider, JWT sessions)
-- **Supabase** (optional — SaaS deployment path)
-- **Docker** + **docker-compose**
-- **Zod** — API validation
+| Layer | Technology |
+|-------|-----------|
+| Framework | Next.js 16 (App Router) |
+| Language | TypeScript (strict) |
+| Styling | Tailwind CSS v4 + Radix UI |
+| ORM | Prisma 7 with pg adapter |
+| Database | PostgreSQL (Supabase) |
+| Auth | NextAuth.js v4 |
+| Billing | Stripe v18 |
+| Email | Resend |
+| Deployment | Vercel |
 
-## Quick Start (Local Development)
+---
+
+## Plans
+
+| Plan | Price | Locations | Users | Items |
+|------|-------|-----------|-------|-------|
+| Free | $0/mo | 1 | 3 | 50 |
+| Pro | $49/mo | 5 | 20 | Unlimited |
+| Enterprise | Custom | Unlimited | Unlimited | Unlimited |
+
+Pro includes a 14-day free trial. No card required until trial ends.
+
+---
+
+## Local Development
 
 ### Prerequisites
-
 - Node.js 20+
-- PostgreSQL 15+ running locally (or use Docker)
+- PostgreSQL 15+ (or a Supabase project)
 
 ### Setup
 
 ```bash
-# Install dependencies
 npm install
 
-# Copy environment variables
+# Copy and fill in environment variables
 cp .env.example .env
-# Edit .env with your DATABASE_URL and NEXTAUTH_SECRET
 
 # Generate Prisma client
 npm run db:generate
@@ -49,61 +70,59 @@ npm run db:generate
 # Run migrations
 npm run db:migrate
 
-# Seed demo data
-npm run db:seed
-
 # Start dev server
 npm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000).
 
-### Demo Credentials
+### Environment Variables
 
-| Role    | Email                  | Password    |
-|---------|------------------------|-------------|
-| Owner   | owner@grandhotel.com   | password123 |
-| Manager | manager@grandhotel.com | password123 |
-| Staff   | staff@grandhotel.com   | password123 |
-
-## Docker Deployment (Self-Hosted)
-
-```bash
-# Copy and configure environment
-cp .env.example .env
-# Set NEXTAUTH_SECRET (generate: openssl rand -base64 32)
-# Set POSTGRES_PASSWORD
-
-# Build and start
-docker compose up -d
-
-# The app will auto-run migrations on startup
+```env
+DATABASE_URL=postgres://...        # Supabase pooled (port 6543)
+DIRECT_URL=postgres://...          # Supabase direct (port 5432)
+NEXTAUTH_SECRET=...                # openssl rand -base64 32
+NEXTAUTH_URL=http://localhost:3000
+STRIPE_SECRET_KEY=sk_test_...
+STRIPE_PUBLISHABLE_KEY=pk_test_...
+STRIPE_WEBHOOK_SECRET=whsec_...
+STRIPE_PRO_MONTHLY_PRICE_ID=price_...
+RESEND_API_KEY=re_...
 ```
 
-Access at [http://localhost:3000](http://localhost:3000).
-
-## Supabase Deployment (SaaS)
-
-1. Create a Supabase project
-2. Run the migration: `supabase/migrations/20240101000000_initial_schema.sql`
-3. Configure env vars for your Supabase project
-4. Deploy to Vercel/Railway/Fly.io
+---
 
 ## Database Schema
 
-| Model             | Description                                        |
-|-------------------|----------------------------------------------------|
-| Organization      | Tenant — hotel chain, restaurant group, etc.       |
-| User              | Team member with role                              |
-| Location          | Hotel, restaurant, bar, kitchen, warehouse, etc.   |
-| Category          | Item grouping (Beverages, Linens, etc.)            |
-| Item              | Inventory item with SKU                            |
-| InventoryRecord   | Stock level per item per location                  |
-| StockMovement     | Audit trail of all stock changes                   |
-| Supplier          | Vendor contact information                         |
-| PurchaseOrder     | Order lifecycle (draft -> sent -> received)        |
-| PurchaseOrderLine | Line items on a PO                                 |
-| Alert             | Low-stock / out-of-stock notifications             |
+| Model | Description |
+|-------|-------------|
+| Organization | Tenant — owns all data, has plan/billing state |
+| User | Team member with role (OWNER, ADMIN, MANAGER, STAFF) |
+| Department | Organisational unit owning one or more locations |
+| Location | Physical stock location (kitchen, bar, store, ward, etc.) |
+| Category | Item grouping |
+| Item | Inventory item with SKU, unit, cost |
+| InventoryRecord | Stock level per item per location |
+| StockMovement | Audit trail of all stock changes |
+| Supplier | Vendor contact and PO history |
+| PurchaseOrder | Order lifecycle |
+| Recipe | Dish/product with costed ingredients |
+| Requisition | Cross-department stock request |
+| ShiftHandover | End-of-shift structured notes |
+| Alert | Low-stock / out-of-stock notifications |
+| AuditLog | Full action history |
+
+---
+
+## Deployment (Vercel + Supabase)
+
+1. Create a Supabase project
+2. Run `prisma migrate deploy` against your database
+3. Add all environment variables to Vercel
+4. Create a Stripe product ($49/mo recurring) and webhook endpoint pointing to `/api/stripe/webhook`
+5. Deploy
+
+---
 
 ## License
 
