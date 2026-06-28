@@ -5,9 +5,12 @@ import { redirect } from "next/navigation";
 import { SessionUser } from "@/types";
 import { Card, CardContent } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { PaginationBar } from "@/components/ui/PaginationBar";
 import { formatDateTime } from "@/lib/utils";
 import { Shield, UserCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
+
+const PAGE_SIZE = 100;
 
 const actionColors: Record<string, string> = {
   CREATE: "bg-emerald-100 text-emerald-700",
@@ -16,19 +19,34 @@ const actionColors: Record<string, string> = {
   LOGIN:  "bg-slate-100 text-slate-600",
 };
 
-export default async function AuditPage() {
+interface AuditPageProps {
+  searchParams: Promise<{ page?: string }>;
+}
+
+export default async function AuditPage({ searchParams }: AuditPageProps) {
   const session = await getServerSession(authOptions);
   if (!session?.user) redirect("/login");
 
   const user = session.user as SessionUser;
   if (!["OWNER", "ADMIN"].includes(user.role)) redirect("/dashboard");
 
-  const logs = await prisma.auditLog.findMany({
-    where: { organizationId: user.organizationId },
-    include: { user: { select: { name: true, email: true } } },
-    orderBy: { createdAt: "desc" },
-    take: 100,
-  });
+  const params = await searchParams;
+  const page = Math.max(1, parseInt(params.page ?? "1") || 1);
+
+  const where = { organizationId: user.organizationId };
+
+  const [total, logs] = await Promise.all([
+    prisma.auditLog.count({ where }),
+    prisma.auditLog.findMany({
+      where,
+      include: { user: { select: { name: true, email: true } } },
+      orderBy: { createdAt: "desc" },
+      skip: (page - 1) * PAGE_SIZE,
+      take: PAGE_SIZE,
+    }),
+  ]);
+
+  const totalPages = Math.ceil(total / PAGE_SIZE);
 
   return (
     <div className="space-y-6">
@@ -38,7 +56,7 @@ export default async function AuditPage() {
         </div>
         <div>
           <h1 className="text-2xl font-bold text-slate-900">Audit Log</h1>
-          <p className="text-sm text-slate-500">Full traceable history of all actions · {logs.length} entries</p>
+          <p className="text-sm text-slate-500">Full traceable history of all actions · {total.toLocaleString()} entries</p>
         </div>
       </div>
 
@@ -92,6 +110,15 @@ export default async function AuditPage() {
           </Table>
         </CardContent>
       </Card>
+
+      <PaginationBar
+        page={page}
+        totalPages={totalPages}
+        total={total}
+        pageSize={PAGE_SIZE}
+        basePath="/audit"
+        searchParams={{ page: params.page }}
+      />
     </div>
   );
 }

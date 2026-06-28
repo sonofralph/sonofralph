@@ -6,9 +6,6 @@ import { SessionUser } from "@/types";
 import {
   Card,
   CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
 } from "@/components/ui/card";
 import {
   Table,
@@ -21,9 +18,12 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { MovementDialogButton } from "./MovementDialogButton";
 import { MovementsExport } from "@/components/ui/MovementsExport";
+import { PaginationBar } from "@/components/ui/PaginationBar";
 import { formatDateTime } from "@/lib/utils";
 
-const movementTypeVariant: Record<string, any> = {
+const PAGE_SIZE = 50;
+
+const movementTypeVariant: Record<string, string> = {
   RECEIPT: "success",
   ISSUE: "danger",
   TRANSFER: "default",
@@ -31,18 +31,28 @@ const movementTypeVariant: Record<string, any> = {
   WASTAGE: "secondary",
 };
 
-export default async function MovementsPage() {
+interface MovementsPageProps {
+  searchParams: Promise<{ page?: string }>;
+}
+
+export default async function MovementsPage({ searchParams }: MovementsPageProps) {
   const session = await getServerSession(authOptions);
   if (!session?.user) redirect("/login");
 
   const user = session.user as SessionUser;
   const orgId = user.organizationId;
+  const params = await searchParams;
+  const page = Math.max(1, parseInt(params.page ?? "1") || 1);
 
-  const [movements, items, locations] = await Promise.all([
+  const where = { item: { organizationId: orgId } };
+
+  const [total, movements, items, locations] = await Promise.all([
+    prisma.stockMovement.count({ where }),
     prisma.stockMovement.findMany({
-      where: { item: { organizationId: orgId } },
+      where,
       orderBy: { createdAt: "desc" },
-      take: 50,
+      skip: (page - 1) * PAGE_SIZE,
+      take: PAGE_SIZE,
       include: {
         item: { select: { name: true, sku: true, unit: true } },
         location: { select: { name: true } },
@@ -60,6 +70,8 @@ export default async function MovementsPage() {
       select: { id: true, name: true, type: true },
     }),
   ]);
+
+  const totalPages = Math.ceil(total / PAGE_SIZE);
 
   return (
     <div className="space-y-6">
@@ -116,7 +128,7 @@ export default async function MovementsPage() {
                       </div>
                     </TableCell>
                     <TableCell>
-                      <Badge variant={movementTypeVariant[m.type] ?? "secondary"}>
+                      <Badge variant={movementTypeVariant[m.type] as "success" | "secondary" | "default" | "destructive" | "warning" ?? "secondary"}>
                         {m.type}
                       </Badge>
                     </TableCell>
@@ -153,6 +165,15 @@ export default async function MovementsPage() {
           </Table>
         </CardContent>
       </Card>
+
+      <PaginationBar
+        page={page}
+        totalPages={totalPages}
+        total={total}
+        pageSize={PAGE_SIZE}
+        basePath="/movements"
+        searchParams={{ page: params.page }}
+      />
     </div>
   );
 }
