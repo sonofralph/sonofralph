@@ -37,9 +37,10 @@ const navItems: NavItem[] = [
   { label: "Reports",         href: "/reports",         icon: BarChart3,       roles: ["OWNER", "ADMIN", "MANAGER"] },
   { label: "Departments",      href: "/departments",      icon: Building2,       roles: ["OWNER", "ADMIN"] },
   { label: "Audit Log",       href: "/audit",           icon: Shield,          roles: ["OWNER", "ADMIN"] },
-  { label: "Team",            href: "/settings/team",   icon: Users,           roles: ["OWNER", "ADMIN"] },
-  { label: "Settings",        href: "/settings",        icon: Settings,        roles: ["OWNER", "ADMIN"] },
-  { label: "Branding",        href: "/settings/branding", icon: Palette,       roles: ["OWNER"] },
+  { label: "Team",            href: "/settings/team",      icon: Users,       roles: ["OWNER", "ADMIN"] },
+  { label: "Settings",        href: "/settings",           icon: Settings,    roles: ["OWNER", "ADMIN"] },
+  { label: "Billing",         href: "/settings/billing",   icon: CreditCard,  roles: ["OWNER"] },
+  { label: "Branding",        href: "/settings/branding",  icon: Palette,     roles: ["OWNER"] },
   { label: "Notifications",   href: "/settings/notifications", icon: Bell,     roles: ["OWNER", "ADMIN", "MANAGER", "STAFF"] },
   { label: "Go Live",         href: "/go-live",                icon: Rocket,   roles: ["OWNER", "ADMIN"] },
 ];
@@ -48,7 +49,7 @@ const navGroups = [
   { label: "Operations",  keys: ["Dashboard", "Inventory", "Stock Movements", "Quick Movement", "Requisitions", "Handovers", "Transfer"] },
   { label: "Procurement", keys: ["Purchase Orders", "Suppliers"] },
   { label: "Management",  keys: ["Recipes", "Locations", "Alerts", "Stocktake", "Wastage", "Par Levels", "Reorder", "Reports"] },
-  { label: "Admin",       keys: ["Departments", "Audit Log", "Team", "Settings", "Branding"] },
+  { label: "Admin",       keys: ["Departments", "Audit Log", "Team", "Settings", "Billing", "Branding"] },
   { label: "Account",     keys: ["Notifications"] },
   { label: "Setup",       keys: ["Go Live"] },
 ];

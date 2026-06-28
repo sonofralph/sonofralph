@@ -13,6 +13,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Bell, Building, CreditCard, Shield, User, Palette } from "lucide-react";
 import { OrgNameForm } from "./OrgNameForm";
+import { getPlanLimits } from "@/lib/plans";
 import Link from "next/link";
 
 export default async function SettingsPage() {
@@ -36,13 +37,7 @@ export default async function SettingsPage() {
 
   if (!org) redirect("/login");
 
-  const planLimits = {
-    FREE: { items: 100, users: 3, locations: 2 },
-    PRO: { items: 1000, users: 20, locations: 10 },
-    ENTERPRISE: { items: -1, users: -1, locations: -1 },
-  };
-
-  const limits = planLimits[org.plan as keyof typeof planLimits];
+  const limits = getPlanLimits(org.plan);
 
   return (
     <div className="space-y-6 max-w-3xl">
@@ -81,6 +76,17 @@ export default async function SettingsPage() {
             <div>
               <p className="text-sm font-semibold text-slate-900 group-hover:text-indigo-600 transition-colors">Branding</p>
               <p className="text-xs text-slate-500">Logo & brand colours</p>
+            </div>
+          </Link>
+        )}
+        {user.role === "OWNER" && (
+          <Link href="/settings/billing" className="flex items-center gap-3 rounded-xl border border-slate-200 bg-white px-5 py-4 hover:bg-slate-50 transition-colors group">
+            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-emerald-50">
+              <CreditCard className="h-4 w-4 text-emerald-600" />
+            </div>
+            <div>
+              <p className="text-sm font-semibold text-slate-900 group-hover:text-indigo-600 transition-colors">Billing</p>
+              <p className="text-xs text-slate-500">Plan, usage & invoices</p>
             </div>
           </Link>
         )}
@@ -131,92 +137,55 @@ export default async function SettingsPage() {
       </Card>
 
       {/* Plan & Usage */}
-      <Card>
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <CreditCard className="h-4 w-4 text-slate-500" />
-              <CardTitle className="text-base">Plan & Usage</CardTitle>
+      {user.role === "OWNER" && (
+        <Card>
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <CreditCard className="h-4 w-4 text-slate-500" />
+                <CardTitle className="text-base">Plan & Usage</CardTitle>
+              </div>
+              <Badge variant={org.plan === "FREE" ? "secondary" : org.plan === "PRO" ? "default" : "success"}>
+                {org.plan}
+              </Badge>
             </div>
-            <Badge
-              variant={
-                org.plan === "FREE"
-                  ? "secondary"
-                  : org.plan === "PRO"
-                  ? "default"
-                  : "success"
-              }
-            >
-              {org.plan}
-            </Badge>
-          </div>
-          <CardDescription>
-            Your current plan usage and limits
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-3 gap-4">
-            {[
-              {
-                label: "Items",
-                used: org._count.items,
-                limit: limits.items,
-              },
-              {
-                label: "Users",
-                used: org._count.users,
-                limit: limits.users,
-              },
-              {
-                label: "Locations",
-                used: org._count.locations,
-                limit: limits.locations,
-              },
-            ].map((stat) => {
-              const pct =
-                stat.limit === -1 ? 0 : (stat.used / stat.limit) * 100;
-              return (
-                <div key={stat.label} className="space-y-2">
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-slate-600">{stat.label}</span>
-                    <span className="font-medium text-slate-900">
-                      {stat.used}
-                      {stat.limit !== -1 && (
-                        <span className="text-slate-400">/{stat.limit}</span>
-                      )}
-                    </span>
-                  </div>
-                  {stat.limit !== -1 && (
-                    <div className="h-2 rounded-full bg-slate-100">
-                      <div
-                        className={`h-2 rounded-full transition-all ${
-                          pct > 90
-                            ? "bg-red-500"
-                            : pct > 70
-                            ? "bg-amber-500"
-                            : "bg-indigo-500"
-                        }`}
-                        style={{ width: `${Math.min(pct, 100)}%` }}
-                      />
+            <CardDescription>Your current plan usage and limits</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid grid-cols-3 gap-4">
+              {[
+                { label: "Locations", used: org._count.locations, limit: limits.locations },
+                { label: "Users", used: org._count.users, limit: limits.users },
+                { label: "Items", used: org._count.items, limit: limits.items },
+              ].map((stat) => {
+                const unlimited = stat.limit === Infinity;
+                const pct = unlimited ? 0 : Math.min((stat.used / stat.limit) * 100, 100);
+                return (
+                  <div key={stat.label} className="space-y-2">
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-slate-600">{stat.label}</span>
+                      <span className="font-medium text-slate-900">
+                        {stat.used}{!unlimited && <span className="text-slate-400">/{stat.limit}</span>}
+                      </span>
                     </div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-
-          {org.plan === "FREE" && (
-            <div className="mt-4 rounded-lg bg-indigo-50 border border-indigo-100 p-4">
-              <p className="text-sm font-medium text-indigo-900">
-                Upgrade to Pro
-              </p>
-              <p className="text-xs text-indigo-600 mt-0.5">
-                Get unlimited items, more users, and advanced reporting.
-              </p>
+                    {!unlimited && (
+                      <div className="h-2 rounded-full bg-slate-100">
+                        <div
+                          className={`h-2 rounded-full transition-all ${pct > 90 ? "bg-red-500" : pct > 70 ? "bg-amber-400" : "bg-indigo-500"}`}
+                          style={{ width: `${pct}%` }}
+                        />
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
             </div>
-          )}
-        </CardContent>
-      </Card>
+            <Link href="/settings/billing" className="inline-flex items-center text-xs font-medium text-indigo-600 hover:text-indigo-800 hover:underline">
+              Manage plan & billing →
+            </Link>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Security */}
       <Card>
