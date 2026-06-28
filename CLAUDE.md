@@ -196,6 +196,33 @@ Run migrations in the `mise` project SQL editor, never the other one.
 
 ---
 
+## GTM & Launch Strategy — TO BE DETAILED AT END OF V1 BUILD
+
+**Flagged during V1.1 build — do not skip this before launch.**
+
+### The core problem
+Distribution is the #1 reason SaaS products fail — not product quality.
+A great product at $49/mo means nothing if the target customer never finds it.
+Current estimated success probability: 30–40%. Target: 70%+.
+
+### What needs to be answered before launch
+- Primary lead channel (one, not five — go deep before going wide)
+- Ideal Customer Profile: which sub-vertical, what size, what geography first
+- Positioning: why Mise over the incumbent they're already using (or not using)
+- First 10 customers plan: who, how, by when
+- Pricing page live and converting before any paid marketing
+- Partnership targets: hospitality accountants, POS vendors, industry associations
+- Content/SEO strategy: who is searching for this and what terms
+
+### Why distribution beats product
+Mise V1 already has feature parity or better vs most SMB competitors.
+The gap is not features — it's awareness and trust.
+The 30→70% move is entirely a GTM execution problem, not a build problem.
+
+**ACTION: Deliver full detailed GTM playbook at end of V1 build.**
+
+---
+
 ## Conventions
 
 - All API routes validate session first, then role, then input (Zod), then DB
