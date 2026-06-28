@@ -4,8 +4,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   LayoutDashboard, Package, ArrowLeftRight, ShoppingCart,
-  Truck, MapPin, Bell, BarChart3, Settings, Users, ChefHat,
-  UtensilsCrossed, Shield, X, RefreshCw, ClipboardList, Trash2, Zap, Target, Palette, Rocket, Building2,
+  Truck, MapPin, Bell, BarChart3, Settings, Users, ChefHat, CreditCard,
+  UtensilsCrossed, Shield, X, RefreshCw, ClipboardList, Trash2, Zap, Target, Palette, Rocket, Building2, Database,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { UserRole } from "@/types";
@@ -42,6 +42,7 @@ const navItems: NavItem[] = [
   { label: "Billing",         href: "/settings/billing",   icon: CreditCard,  roles: ["OWNER"] },
   { label: "Branding",        href: "/settings/branding",  icon: Palette,     roles: ["OWNER"] },
   { label: "Notifications",   href: "/settings/notifications", icon: Bell,     roles: ["OWNER", "ADMIN", "MANAGER", "STAFF"] },
+  { label: "Data & Privacy",  href: "/settings/data",          icon: Database, roles: ["OWNER"] },
   { label: "Go Live",         href: "/go-live",                icon: Rocket,   roles: ["OWNER", "ADMIN"] },
 ];
 
@@ -50,7 +51,7 @@ const navGroups = [
   { label: "Procurement", keys: ["Purchase Orders", "Suppliers"] },
   { label: "Management",  keys: ["Recipes", "Locations", "Alerts", "Stocktake", "Wastage", "Par Levels", "Reorder", "Reports"] },
   { label: "Admin",       keys: ["Departments", "Audit Log", "Team", "Settings", "Billing", "Branding"] },
-  { label: "Account",     keys: ["Notifications"] },
+  { label: "Account",     keys: ["Notifications", "Data & Privacy"] },
   { label: "Setup",       keys: ["Go Live"] },
 ];
 

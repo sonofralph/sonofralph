@@ -11,7 +11,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Bell, Building, CreditCard, Shield, User, Palette } from "lucide-react";
+import { Bell, Building, CreditCard, Shield, User, Palette, Database } from "lucide-react";
 import { OrgNameForm } from "./OrgNameForm";
 import { getPlanLimits } from "@/lib/plans";
 import Link from "next/link";
@@ -87,6 +87,17 @@ export default async function SettingsPage() {
             <div>
               <p className="text-sm font-semibold text-slate-900 group-hover:text-indigo-600 transition-colors">Billing</p>
               <p className="text-xs text-slate-500">Plan, usage & invoices</p>
+            </div>
+          </Link>
+        )}
+        {user.role === "OWNER" && (
+          <Link href="/settings/data" className="flex items-center gap-3 rounded-xl border border-slate-200 bg-white px-5 py-4 hover:bg-slate-50 transition-colors group">
+            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-rose-50">
+              <Database className="h-4 w-4 text-rose-600" />
+            </div>
+            <div>
+              <p className="text-sm font-semibold text-slate-900 group-hover:text-indigo-600 transition-colors">Data & Privacy</p>
+              <p className="text-xs text-slate-500">Export data · delete account</p>
             </div>
           </Link>
         )}
