@@ -12,9 +12,10 @@ export default async function OnboardingPage() {
   const user = session.user as SessionUser;
   const orgId = user.organizationId;
 
-  const [locationCount, itemCount] = await Promise.all([
+  const [locationCount, itemCount, org] = await Promise.all([
     prisma.location.count({ where: { organizationId: orgId } }),
     prisma.item.count({ where: { organizationId: orgId } }),
+    prisma.organization.findUnique({ where: { id: orgId }, select: { orgSize: true } }),
   ]);
 
   // Already set up — send to dashboard
@@ -26,6 +27,7 @@ export default async function OnboardingPage() {
         orgName={user.organizationName}
         hasLocations={locationCount > 0}
         hasItems={itemCount > 0}
+        savedOrgSize={org?.orgSize ?? null}
       />
     </div>
   );

@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import {
   MapPin, Package, CheckCircle2, ArrowRight, Loader2, Plus, Trash2, ChefHat,
-  UtensilsCrossed, Hotel, Wine, Coffee, Truck, Stethoscope,
+  UtensilsCrossed, Hotel, Wine, Coffee, Truck, Stethoscope, Users, Building2, Warehouse,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,6 +14,7 @@ interface Props {
   orgName: string;
   hasLocations: boolean;
   hasItems: boolean;
+  savedOrgSize: string | null;
 }
 
 const BUSINESS_TYPES = [
@@ -87,15 +88,42 @@ const BUSINESS_TYPES = [
   },
 ] as const;
 
+const ORG_SIZES = [
+  {
+    key: "SMALL",
+    label: "Just me or a small team",
+    description: "1–2 locations, up to 3 users, 50 tracked items",
+    icon: Users,
+    plan: "Free",
+    badge: "bg-slate-100 text-slate-600",
+  },
+  {
+    key: "GROWING",
+    label: "Growing business",
+    description: "Up to 5 locations, 20 users, unlimited items — 14-day free trial included",
+    icon: Building2,
+    plan: "Pro · $49/mo",
+    badge: "bg-indigo-100 text-indigo-700",
+  },
+  {
+    key: "ENTERPRISE",
+    label: "Established group or chain",
+    description: "6+ locations, unlimited users — custom pricing, dedicated support",
+    icon: Warehouse,
+    plan: "Enterprise",
+    badge: "bg-amber-100 text-amber-700",
+  },
+] as const;
+
 const LOCATION_TYPES = ["KITCHEN", "BAR", "CELLAR", "STORAGE", "FREEZER", "HOUSEKEEPING", "LAUNDRY", "PHARMACY", "WARD", "EVENT_SPACE", "OTHER"] as const;
 const ITEM_UNITS = ["kg", "g", "litre", "ml", "each", "bottle", "case", "box", "portion"];
 
 interface LocationDraft { name: string; type: string }
 interface ItemDraft { name: string; sku: string; unit: string; category: string; unitCost: string }
 
-export function OnboardingWizard({ orgName, hasLocations, hasItems }: Props) {
+export function OnboardingWizard({ orgName, hasLocations, hasItems, savedOrgSize }: Props) {
   const router = useRouter();
-  const initialStep = hasLocations ? 2 : 0;
+  const initialStep = hasLocations ? 3 : (savedOrgSize ? 2 : 0);
   const [step, setStep] = useState(initialStep);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -103,11 +131,14 @@ export function OnboardingWizard({ orgName, hasLocations, hasItems }: Props) {
   // Step 0 — Business type
   const [businessType, setBusinessType] = useState<string>("");
 
-  // Step 1 — Locations
+  // Step 1 — Org size
+  const [orgSize, setOrgSize] = useState<string>(savedOrgSize ?? "");
+
+  // Step 2 — Locations
   const selectedBiz = BUSINESS_TYPES.find((b) => b.key === businessType) ?? BUSINESS_TYPES[0];
   const [locations, setLocations] = useState<LocationDraft[]>([{ name: "", type: "KITCHEN" }]);
 
-  // Step 2 — Items
+  // Step 3 — Items
   const [items, setItems] = useState<ItemDraft[]>([
     { name: "", sku: "", unit: "kg", category: "General", unitCost: "" },
   ]);
@@ -146,6 +177,20 @@ export function OnboardingWizard({ orgName, hasLocations, hasItems }: Props) {
     setStep(1);
   }
 
+  async function submitOrgSize() {
+    if (!orgSize) { setError("Please select your organisation size"); return; }
+    setLoading(true);
+    setError("");
+    const res = await fetch("/api/onboarding/org-size", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ orgSize }),
+    });
+    setLoading(false);
+    if (!res.ok) { setError("Failed to save — please try again"); return; }
+    setStep(2);
+  }
+
   async function submitLocations() {
     const valid = locations.filter((l) => l.name.trim());
     if (valid.length === 0) { setError("Add at least one location"); return; }
@@ -157,12 +202,25 @@ export function OnboardingWizard({ orgName, hasLocations, hasItems }: Props) {
       body: JSON.stringify({ locations: valid }),
     });
     if (!res.ok) { setError((await res.json()).error ?? "Failed"); setLoading(false); return; }
-    setStep(2);
+    setStep(3);
     setLoading(false);
   }
 
+  async function redirectAfterOnboarding() {
+    if (orgSize === "GROWING") {
+      setLoading(true);
+      const res = await fetch("/api/stripe/checkout", { method: "POST" });
+      if (res.ok) {
+        const { url } = await res.json();
+        window.location.href = url;
+        return;
+      }
+    }
+    router.push("/go-live");
+  }
+
   async function submitItems(skip = false) {
-    if (skip) { router.push("/go-live"); return; }
+    if (skip) { await redirectAfterOnboarding(); return; }
     const valid = items.filter((it) => it.name.trim() && it.sku.trim());
     if (valid.length === 0) { setError("Add at least one item or skip"); return; }
     setLoading(true);
@@ -181,11 +239,12 @@ export function OnboardingWizard({ orgName, hasLocations, hasItems }: Props) {
       }),
     });
     if (!res.ok) { setError((await res.json()).error ?? "Failed"); setLoading(false); return; }
-    router.push("/go-live");
+    await redirectAfterOnboarding();
   }
 
   const steps = [
     { label: "Business", icon: ChefHat },
+    { label: "Size", icon: Users },
     { label: "Locations", icon: MapPin },
     { label: "Items", icon: Package },
     { label: "Done", icon: CheckCircle2 },
@@ -206,9 +265,8 @@ export function OnboardingWizard({ orgName, hasLocations, hasItems }: Props) {
       <div className="flex items-center justify-center gap-0">
         {steps.map((s, i) => {
           const Icon = s.icon;
-          const stepNum = i;
-          const done = step > stepNum;
-          const active = step === stepNum;
+          const done = step > i;
+          const active = step === i;
           return (
             <div key={s.label} className="flex items-center">
               <div className="flex flex-col items-center gap-1">
@@ -225,7 +283,7 @@ export function OnboardingWizard({ orgName, hasLocations, hasItems }: Props) {
                 </span>
               </div>
               {i < steps.length - 1 && (
-                <div className={cn("h-0.5 w-16 mx-2 mb-4 rounded transition-all", done ? "bg-emerald-400" : "bg-slate-200")} />
+                <div className={cn("h-0.5 w-12 mx-2 mb-4 rounded transition-all", done ? "bg-emerald-400" : "bg-slate-200")} />
               )}
             </div>
           );
@@ -280,8 +338,63 @@ export function OnboardingWizard({ orgName, hasLocations, hasItems }: Props) {
         </div>
       )}
 
-      {/* Step 1 — Locations */}
+      {/* Step 1 — Org size */}
       {step === 1 && (
+        <div className="space-y-5">
+          <div>
+            <h2 className="text-lg font-semibold text-slate-900">How big is your operation?</h2>
+            <p className="text-sm text-slate-500 mt-0.5">We&apos;ll match the right plan to your needs. You can change this any time.</p>
+          </div>
+          <div className="space-y-3">
+            {ORG_SIZES.map((size) => {
+              const Icon = size.icon;
+              const selected = orgSize === size.key;
+              return (
+                <button
+                  key={size.key}
+                  type="button"
+                  onClick={() => { setOrgSize(size.key); setError(""); }}
+                  className={cn(
+                    "w-full flex items-center gap-4 rounded-xl border-2 p-4 text-left transition-all",
+                    selected ? "border-indigo-600 bg-indigo-50" : "border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50"
+                  )}
+                >
+                  <div className={cn(
+                    "flex h-10 w-10 shrink-0 items-center justify-center rounded-lg",
+                    selected ? "bg-indigo-600" : "bg-slate-100"
+                  )}>
+                    <Icon className={cn("h-5 w-5", selected ? "text-white" : "text-slate-500")} />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between gap-2">
+                      <p className={cn("text-sm font-semibold", selected ? "text-indigo-900" : "text-slate-900")}>{size.label}</p>
+                      <span className={cn("shrink-0 text-xs font-medium px-2 py-0.5 rounded-full", size.badge)}>{size.plan}</span>
+                    </div>
+                    <p className="text-xs text-slate-500 mt-0.5">{size.description}</p>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+          {orgSize === "GROWING" && (
+            <div className="rounded-lg bg-indigo-50 border border-indigo-200 px-4 py-3 text-sm text-indigo-800">
+              Your 14-day Pro trial starts automatically after setup — no card required until the trial ends.
+            </div>
+          )}
+          {orgSize === "ENTERPRISE" && (
+            <div className="rounded-lg bg-amber-50 border border-amber-200 px-4 py-3 text-sm text-amber-800">
+              After setup, our team will reach out to arrange custom pricing and onboarding support.
+            </div>
+          )}
+          <Button className="w-full" onClick={submitOrgSize} disabled={loading || !orgSize}>
+            {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+            Continue <ArrowRight className="ml-2 h-4 w-4" />
+          </Button>
+        </div>
+      )}
+
+      {/* Step 2 — Locations */}
+      {step === 2 && (
         <div className="space-y-5">
           <div>
             <h2 className="text-lg font-semibold text-slate-900">Add your storage locations</h2>
@@ -339,8 +452,8 @@ export function OnboardingWizard({ orgName, hasLocations, hasItems }: Props) {
         </div>
       )}
 
-      {/* Step 2 — Items */}
-      {step === 2 && (
+      {/* Step 3 — Items */}
+      {step === 3 && (
         <div className="space-y-5">
           <div>
             <h2 className="text-lg font-semibold text-slate-900">Add your first items</h2>
@@ -384,7 +497,8 @@ export function OnboardingWizard({ orgName, hasLocations, hasItems }: Props) {
             </Button>
             <Button className="flex-1" onClick={() => submitItems(false)} disabled={loading}>
               {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-              Finish setup <CheckCircle2 className="ml-2 h-4 w-4" />
+              {orgSize === "GROWING" ? "Finish & start trial" : "Finish setup"}
+              <CheckCircle2 className="ml-2 h-4 w-4" />
             </Button>
           </div>
         </div>

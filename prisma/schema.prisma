@@ -10,14 +10,19 @@ model Organization {
   id             String   @id @default(cuid())
   name           String
   slug           String   @unique
-  plan           String   @default("FREE")
-  deploymentMode String   @default("SAAS")
-  businessType   String   @default("RESTAURANT")
-  logoUrl        String?
-  brandColor     String?
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
-  goLiveAt       DateTime?
+  plan                 String    @default("FREE")
+  planStatus           String    @default("ACTIVE")
+  deploymentMode       String    @default("SAAS")
+  businessType         String    @default("RESTAURANT")
+  orgSize              String?
+  logoUrl              String?
+  brandColor           String?
+  stripeCustomerId     String?
+  stripeSubscriptionId String?
+  trialEndsAt          DateTime?
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+  goLiveAt             DateTime?
 
   users          User[]
   locations      Location[]
