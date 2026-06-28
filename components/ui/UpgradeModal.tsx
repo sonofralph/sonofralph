@@ -9,7 +9,7 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Loader2, Zap, ArrowRight } from "lucide-react";
+import { Loader2, Zap, ArrowRight, AlertCircle } from "lucide-react";
 
 const RESOURCE_COPY: Record<string, { noun: string; proUnlock: string; enterpriseUnlock: string }> = {
   locations: {
@@ -39,13 +39,15 @@ interface Props {
   current: number;
   limit: number;
   currentPlan?: string;
+  userRole?: string;
 }
 
-export function UpgradeModal({ open, onClose, resource, current, limit, currentPlan = "FREE" }: Props) {
+export function UpgradeModal({ open, onClose, resource, current, limit, currentPlan = "FREE", userRole }: Props) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const copy = RESOURCE_COPY[resource] ?? { noun: resource, proUnlock: "more", enterpriseUnlock: "unlimited" };
   const isPro = currentPlan === "PRO";
+  const isManager = userRole === "MANAGER";
 
   async function handleUpgrade() {
     setLoading(true);
@@ -70,6 +72,34 @@ export function UpgradeModal({ open, onClose, resource, current, limit, currentP
       return;
     }
     setLoading(false);
+  }
+
+  if (isManager) {
+    return (
+      <Dialog open={open} onOpenChange={onClose}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-100 mb-3">
+              <AlertCircle className="h-5 w-5 text-slate-500" />
+            </div>
+            <DialogTitle>Plan limit reached</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-2 text-sm text-slate-600">
+            <p>
+              Your organisation has reached its plan limit for{" "}
+              {copy.noun}s.
+            </p>
+            <p>
+              To add more, ask your <strong>Owner</strong> or{" "}
+              <strong>Admin</strong> to upgrade the plan.
+            </p>
+          </div>
+          <DialogFooter>
+            <Button onClick={onClose}>Got it</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    );
   }
 
   if (isPro) {

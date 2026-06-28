@@ -7,7 +7,8 @@ export type GatedResource = "locations" | "users" | "items";
 export async function checkPlanLimit(
   organizationId: string,
   resource: GatedResource,
-  adding = 1
+  adding = 1,
+  userRole?: string
 ): Promise<NextResponse | null> {
   const org = await prisma.organization.findUnique({
     where: { id: organizationId },
@@ -31,7 +32,7 @@ export async function checkPlanLimit(
 
   if (current + adding > limit) {
     return NextResponse.json(
-      { error: "PLAN_LIMIT_REACHED", resource, current, limit, currentPlan: effectivePlan, upgradeRequired: true },
+      { error: "PLAN_LIMIT_REACHED", resource, current, limit, currentPlan: effectivePlan, userRole, upgradeRequired: true },
       { status: 402 }
     );
   }

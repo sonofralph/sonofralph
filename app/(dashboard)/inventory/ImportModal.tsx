@@ -81,7 +81,7 @@ export function ImportModal({ open, onClose }: Props) {
   const [result, setResult] = useState<{ created: number; updated: number } | null>(null);
   const [error, setError] = useState("");
   const [dragging, setDragging] = useState(false);
-  const [upgradeInfo, setUpgradeInfo] = useState<{ current: number; limit: number; currentPlan: string } | null>(null);
+  const [upgradeInfo, setUpgradeInfo] = useState<{ current: number; limit: number; currentPlan: string; userRole: string } | null>(null);
 
   const validRows = rows.filter((r) => !r._error);
   const invalidRows = rows.filter((r) => r._error);
@@ -122,7 +122,7 @@ export function ImportModal({ open, onClose }: Props) {
       if (res.status === 402) {
         const data = await res.json();
         onClose();
-        setUpgradeInfo({ current: data.current, limit: data.limit, currentPlan: data.currentPlan ?? "FREE" });
+        setUpgradeInfo({ current: data.current, limit: data.limit, currentPlan: data.currentPlan ?? "FREE", userRole: data.userRole ?? "OWNER" });
         return;
       }
       const data = await res.json();
@@ -163,6 +163,7 @@ export function ImportModal({ open, onClose }: Props) {
       current={upgradeInfo?.current ?? 0}
       limit={upgradeInfo?.limit ?? 50}
       currentPlan={upgradeInfo?.currentPlan}
+      userRole={upgradeInfo?.userRole}
     />
     <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent className="max-w-2xl">

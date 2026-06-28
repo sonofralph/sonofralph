@@ -68,7 +68,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
-  const limitHit = await checkPlanLimit(user.organizationId, "items");
+  const limitHit = await checkPlanLimit(user.organizationId, "items", 1, user.role);
   if (limitHit) return limitHit;
 
   try {
