@@ -205,7 +205,7 @@ Run migrations in the `mise` project SQL editor, never the other one.
 - [ ] RESEND_API_KEY set in Vercel
 - [ ] Sentry env vars set in Vercel (SENTRY_DSN, NEXT_PUBLIC_SENTRY_DSN, SENTRY_AUTH_TOKEN, SENTRY_ORG, SENTRY_PROJECT)
 - [ ] Supabase → Pro plan (daily backups, PITR, no pausing)
-- [ ] Security headers added to next.config.ts
+- [x] Security headers added to next.config.ts (X-Frame-Options, HSTS, nosniff, Referrer-Policy, Permissions-Policy)
 - [ ] Status page live (Instatus free tier)
 - [ ] Support email inbox active (support@mise.app or hello@mise.app)
 - [ ] LICENSE entity name updated from Azurion to Mise entity

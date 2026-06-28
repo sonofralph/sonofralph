@@ -79,15 +79,33 @@ Open [http://localhost:3000](http://localhost:3000).
 ### Environment Variables
 
 ```env
-DATABASE_URL=postgres://...        # Supabase pooled (port 6543)
-DIRECT_URL=postgres://...          # Supabase direct (port 5432)
-NEXTAUTH_SECRET=...                # openssl rand -base64 32
+# Database (Supabase)
+DATABASE_URL=postgres://...           # pooled connection (port 6543)
+DIRECT_URL=postgres://...             # direct connection (port 5432)
+
+# Auth
+NEXTAUTH_SECRET=...                   # openssl rand -base64 32
 NEXTAUTH_URL=http://localhost:3000
+
+# Stripe
 STRIPE_SECRET_KEY=sk_test_...
 STRIPE_PUBLISHABLE_KEY=pk_test_...
 STRIPE_WEBHOOK_SECRET=whsec_...
 STRIPE_PRO_MONTHLY_PRICE_ID=price_...
+
+# Email (Resend)
 RESEND_API_KEY=re_...
+ALERT_EMAIL_FROM=noreply@mise.app     # optional, defaults to noreply@mise.app
+
+# Error tracking (Sentry)
+SENTRY_DSN=https://...@sentry.io/...
+NEXT_PUBLIC_SENTRY_DSN=https://...@sentry.io/...
+SENTRY_AUTH_TOKEN=...
+SENTRY_ORG=your-org
+SENTRY_PROJECT=mise
+
+# Internal admin dashboard
+ADMIN_EMAILS=you@example.com          # comma-separated, access /admin
 ```
 
 ---
@@ -126,4 +144,5 @@ RESEND_API_KEY=re_...
 
 ## License
 
-MIT
+Proprietary. Copyright © 2026 Azurion Global Corporation. All rights reserved.
+See [LICENSE](./LICENSE) for full terms.

@@ -165,28 +165,30 @@ export default function LoginPage() {
             </Button>
           </form>
 
-          {/* Demo credentials */}
-          <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 space-y-2">
-            <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide">Demo accounts</p>
-            {[
-              { label: "Owner", email: "owner@grandhotel.com" },
-              { label: "Manager", email: "manager@grandhotel.com" },
-              { label: "Staff", email: "staff@grandhotel.com" },
-            ].map((demo) => (
-              <button
-                key={demo.email}
-                type="button"
-                onClick={() => { setEmail(demo.email); setPassword("password123"); }}
-                className={cn(
-                  "flex w-full items-center justify-between rounded-lg px-3 py-2 text-sm transition-colors",
-                  "hover:bg-white hover:shadow-sm border border-transparent hover:border-slate-200"
-                )}
-              >
-                <span className="font-medium text-slate-700">{demo.label}</span>
-                <span className="text-slate-400 text-xs">{demo.email}</span>
-              </button>
-            ))}
-          </div>
+          {/* Demo credentials — only visible in non-production environments */}
+          {process.env.NODE_ENV !== "production" && (
+            <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 space-y-2">
+              <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide">Demo accounts</p>
+              {[
+                { label: "Owner", email: "owner@grandhotel.com" },
+                { label: "Manager", email: "manager@grandhotel.com" },
+                { label: "Staff", email: "staff@grandhotel.com" },
+              ].map((demo) => (
+                <button
+                  key={demo.email}
+                  type="button"
+                  onClick={() => { setEmail(demo.email); setPassword("password123"); }}
+                  className={cn(
+                    "flex w-full items-center justify-between rounded-lg px-3 py-2 text-sm transition-colors",
+                    "hover:bg-white hover:shadow-sm border border-transparent hover:border-slate-200"
+                  )}
+                >
+                  <span className="font-medium text-slate-700">{demo.label}</span>
+                  <span className="text-slate-400 text-xs">{demo.email}</span>
+                </button>
+              ))}
+            </div>
+          )}
 
           <p className="text-center text-xs text-slate-400">
             Need an account?{" "}
