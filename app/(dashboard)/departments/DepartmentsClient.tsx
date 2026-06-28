@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Plus, PenLine, Trash2, Check, X, MapPin, ChevronDown, ChevronRight } from "lucide-react";
+import { Plus, Trash2, Check, X, MapPin, ChevronDown, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
@@ -187,7 +187,7 @@ export function DepartmentsClient({ initialDepartments, allLocations }: Props) {
                     onClick={() => { setEditingId(dept.id); setEditName(dept.name); }}
                     className="text-slate-400 hover:text-slate-600 p-1"
                   >
-                    <PenLine className="h-3.5 w-3.5" />
+                    <span className="text-xs font-medium">Rename</span>
                   </button>
                   <button
                     onClick={() => deleteDepartment(dept.id, dept.name)}
