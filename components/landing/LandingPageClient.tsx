@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import {
   Package, BarChart3, ShoppingCart, Users, Shield, Zap,
-  ChevronRight, CheckCircle2, Star, ArrowRight, Globe, ChevronDown,
+  ChevronRight, CheckCircle2, Star, ArrowRight, Globe, ChevronDown, Menu, X,
 } from "lucide-react";
 import { translations, languages, type Language } from "@/lib/i18n/translations";
 
@@ -56,6 +56,7 @@ function LanguageSwitcher({ lang, setLang }: { lang: Language; setLang: (l: Lang
 
 export default function LandingPageClient() {
   const [lang, setLangState] = useState<Language>("en");
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     const saved = localStorage.getItem(STORAGE_KEY) as Language | null;
@@ -83,19 +84,24 @@ export default function LandingPageClient() {
     <div className="min-h-screen bg-white text-slate-900" dir={dir}>
       {/* Nav */}
       <header className="sticky top-0 z-50 border-b border-slate-100 bg-white/80 backdrop-blur-sm">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
+        <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 sm:px-6 sm:py-4">
+          {/* Logo */}
           <div className="flex items-center gap-2">
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-600">
               <Package className="h-4 w-4 text-white" />
             </div>
             <span className="text-lg font-bold text-slate-900">Mise</span>
           </div>
+
+          {/* Desktop nav */}
           <nav className="hidden items-center gap-8 text-sm font-medium text-slate-600 md:flex">
-            <a href="#features"      className="hover:text-slate-900 transition-colors">{t.nav.features}</a>
-            <a href="#pricing"       className="hover:text-slate-900 transition-colors">{t.nav.pricing}</a>
-            <a href="#testimonials"  className="hover:text-slate-900 transition-colors">{t.nav.customers}</a>
+            <a href="#features"     className="hover:text-slate-900 transition-colors">{t.nav.features}</a>
+            <a href="#pricing"      className="hover:text-slate-900 transition-colors">{t.nav.pricing}</a>
+            <a href="#testimonials" className="hover:text-slate-900 transition-colors">{t.nav.customers}</a>
           </nav>
-          <div className="flex items-center gap-3">
+
+          {/* Desktop right actions */}
+          <div className="hidden items-center gap-3 md:flex">
             <Link href="/login" className="text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors">
               {t.nav.signIn}
             </Link>
@@ -104,23 +110,54 @@ export default function LandingPageClient() {
             </Link>
             <LanguageSwitcher lang={lang} setLang={setLang} />
           </div>
+
+          {/* Mobile right: language + hamburger */}
+          <div className="flex items-center gap-2 md:hidden">
+            <LanguageSwitcher lang={lang} setLang={setLang} />
+            <button
+              onClick={() => setMobileMenuOpen((o) => !o)}
+              className="rounded-lg border border-slate-200 p-2 text-slate-600 hover:border-slate-300 hover:text-slate-900 transition-colors"
+              aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
+            >
+              {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            </button>
+          </div>
         </div>
+
+        {/* Mobile drawer */}
+        {mobileMenuOpen && (
+          <div className="border-t border-slate-100 bg-white px-4 pb-4 pt-2 md:hidden">
+            <nav className="flex flex-col gap-1 text-sm font-medium text-slate-600">
+              <a href="#features"     onClick={() => setMobileMenuOpen(false)} className="rounded-lg px-3 py-2.5 hover:bg-slate-50 hover:text-slate-900 transition-colors">{t.nav.features}</a>
+              <a href="#pricing"      onClick={() => setMobileMenuOpen(false)} className="rounded-lg px-3 py-2.5 hover:bg-slate-50 hover:text-slate-900 transition-colors">{t.nav.pricing}</a>
+              <a href="#testimonials" onClick={() => setMobileMenuOpen(false)} className="rounded-lg px-3 py-2.5 hover:bg-slate-50 hover:text-slate-900 transition-colors">{t.nav.customers}</a>
+            </nav>
+            <div className="mt-3 flex flex-col gap-2 border-t border-slate-100 pt-3">
+              <Link href="/login" onClick={() => setMobileMenuOpen(false)} className="rounded-lg border border-slate-200 px-4 py-2.5 text-center text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-colors">
+                {t.nav.signIn}
+              </Link>
+              <Link href="/register" onClick={() => setMobileMenuOpen(false)} className="rounded-lg bg-indigo-600 px-4 py-2.5 text-center text-sm font-semibold text-white hover:bg-indigo-700 transition-colors">
+                {t.nav.startFree}
+              </Link>
+            </div>
+          </div>
+        )}
       </header>
 
       {/* Hero */}
-      <section className="relative overflow-hidden bg-gradient-to-b from-indigo-50/60 to-white px-6 pb-24 pt-20 text-center">
+      <section className="relative overflow-hidden bg-gradient-to-b from-indigo-50/60 to-white px-4 pb-16 pt-14 text-center sm:px-6 sm:pb-24 sm:pt-20">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-indigo-100/40 via-transparent to-transparent" />
         <div className="relative mx-auto max-w-4xl">
           <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-indigo-200 bg-indigo-50 px-4 py-1.5 text-xs font-semibold text-indigo-700">
             <Zap className="h-3.5 w-3.5" />
             {t.hero.badge}
           </div>
-          <h1 className="mb-6 text-5xl font-extrabold leading-tight tracking-tight text-slate-900 md:text-6xl">
+          <h1 className="mb-6 text-4xl font-extrabold leading-tight tracking-tight text-slate-900 sm:text-5xl md:text-6xl">
             {t.hero.h1Line1}
             <br />
             <span className="text-indigo-600">{t.hero.h1Line2}</span>
           </h1>
-          <p className="mx-auto mb-10 max-w-2xl text-lg text-slate-500">{t.hero.description}</p>
+          <p className="mx-auto mb-10 max-w-2xl text-base text-slate-500 sm:text-lg">{t.hero.description}</p>
           <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
             <Link href="/register" className="flex items-center gap-2 rounded-xl bg-indigo-600 px-8 py-3.5 text-base font-semibold text-white shadow-lg shadow-indigo-200 hover:bg-indigo-700 transition-all hover:shadow-indigo-300">
               {t.hero.ctaPrimary} <ArrowRight className="h-4 w-4" />
@@ -141,7 +178,7 @@ export default function LandingPageClient() {
               <div className="h-3 w-3 rounded-full bg-emerald-400" />
               <span className="ml-3 text-xs text-slate-400">mise.app/inventory</span>
             </div>
-            <div className="grid grid-cols-4 gap-4 p-6">
+            <div className="grid grid-cols-2 gap-3 p-4 sm:grid-cols-4 sm:gap-4 sm:p-6">
               {[
                 { label: "Stock Value",      value: "$48,320", color: "text-indigo-600",  bg: "bg-indigo-50" },
                 { label: "Low Stock Alerts", value: "7 items", color: "text-amber-600",   bg: "bg-amber-50" },
@@ -150,7 +187,7 @@ export default function LandingPageClient() {
               ].map((kpi) => (
                 <div key={kpi.label} className={`rounded-xl ${kpi.bg} p-4 text-left`}>
                   <p className="text-xs text-slate-500">{kpi.label}</p>
-                  <p className={`text-2xl font-bold ${kpi.color} mt-1`}>{kpi.value}</p>
+                  <p className={`text-lg font-bold sm:text-2xl ${kpi.color} mt-1`}>{kpi.value}</p>
                 </div>
               ))}
             </div>
@@ -162,9 +199,9 @@ export default function LandingPageClient() {
                   { item: "Chardonnay 2022",        type: "ISSUE",   qty: "-6 btl", color: "text-blue-600 bg-blue-50" },
                   { item: "Olive Oil Extra Virgin", type: "WASTAGE", qty: "-2 L",   color: "text-red-600 bg-red-50" },
                 ].map((row) => (
-                  <div key={row.item} className="flex items-center justify-between border-t border-slate-50 px-4 py-3">
-                    <p className="text-sm font-medium text-slate-800">{row.item}</p>
-                    <div className="flex items-center gap-3">
+                  <div key={row.item} className="flex items-center justify-between border-t border-slate-50 px-4 py-3 gap-3">
+                    <p className="min-w-0 truncate text-sm font-medium text-slate-800">{row.item}</p>
+                    <div className="flex shrink-0 items-center gap-3">
                       <span className={`rounded-md px-2 py-0.5 text-xs font-semibold ${row.color}`}>{row.type}</span>
                       <span className="text-sm font-bold text-slate-700">{row.qty}</span>
                     </div>
