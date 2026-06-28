@@ -58,6 +58,7 @@ const routeLabels: Record<string, string> = {
   "/reports/aging": "Inventory Aging Report",
   "/settings/notifications": "Notification Preferences",
   "/settings/branding": "Branding",
+  "/go-live": "Go Live",
 };
 
 export function Header({ user, alertCount = 0, alerts = [], onMenuToggle }: HeaderProps) {

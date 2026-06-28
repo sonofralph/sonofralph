@@ -17,6 +17,7 @@ model Organization {
   brandColor     String?
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
+  goLiveAt       DateTime?
 
   users          User[]
   locations      Location[]

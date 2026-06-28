@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { AddSupplierButton } from "./AddSupplierButton";
+import { SupplierImportButton } from "./SupplierImportButton";
 import { Mail, Phone, Building } from "lucide-react";
 import Link from "next/link";
 
@@ -46,7 +47,12 @@ export default async function SuppliersPage() {
             Manage your vendor and supplier relationships
           </p>
         </div>
-        {canManage && <AddSupplierButton />}
+        {canManage && (
+          <div className="flex gap-2">
+            <SupplierImportButton />
+            <AddSupplierButton />
+          </div>
+        )}
       </div>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">

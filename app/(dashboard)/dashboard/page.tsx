@@ -10,7 +10,7 @@ import { MovementAreaChart, CategoryPieChart } from "@/components/dashboard/Dash
 import {
   Package, AlertTriangle, ShoppingCart, MapPin,
   TrendingDown, ArrowUpRight, ArrowDownRight,
-  RefreshCw, Settings, Trash2, TrendingUp, ClipboardList, MessageSquare,
+  RefreshCw, Settings, Trash2, TrendingUp, ClipboardList, MessageSquare, Rocket,
 } from "lucide-react";
 import { formatDateTime } from "@/lib/utils";
 import Link from "next/link";
@@ -62,6 +62,7 @@ export default async function DashboardPage({
     movementsLast7Days,
     pendingRequisitions,
     recentHandovers,
+    org,
   ] = await Promise.all([
     prisma.item.count({ where: { organizationId: orgId } }),
 
@@ -134,6 +135,11 @@ export default async function DashboardPage({
       },
       orderBy: { createdAt: "desc" },
       take: 3,
+    }),
+
+    prisma.organization.findUnique({
+      where: { id: orgId },
+      select: { goLiveAt: true },
     }),
   ]);
 
@@ -219,6 +225,26 @@ export default async function DashboardPage({
           </div>
           <a href="/onboarding" className="shrink-0 ml-4 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 transition-colors">
             Complete setup
+          </a>
+        </div>
+      )}
+
+      {/* Go-live nudge: org has items but hasn't entered opening stock */}
+      {totalItems > 0 && !org?.goLiveAt && ["OWNER", "ADMIN"].includes(user.role) && (
+        <div className="flex items-center justify-between rounded-xl border border-amber-200 bg-amber-50 px-5 py-4">
+          <div className="flex items-start gap-3">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-amber-100">
+              <Rocket className="h-4 w-4 text-amber-700" />
+            </div>
+            <div>
+              <p className="font-semibold text-amber-900">Set your opening stock to go live</p>
+              <p className="text-sm text-amber-700 mt-0.5">
+                Enter today&apos;s physical counts so your inventory numbers are accurate from day one.
+              </p>
+            </div>
+          </div>
+          <a href="/go-live" className="shrink-0 ml-4 rounded-lg bg-amber-600 px-4 py-2 text-sm font-medium text-white hover:bg-amber-700 transition-colors whitespace-nowrap">
+            Set opening stock →
           </a>
         </div>
       )}

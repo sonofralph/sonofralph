@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import {
   LayoutDashboard, Package, ArrowLeftRight, ShoppingCart,
   Truck, MapPin, Bell, BarChart3, Settings, Users, ChefHat,
-  UtensilsCrossed, Shield, X, RefreshCw, ClipboardList, Trash2, Zap, Target, Palette,
+  UtensilsCrossed, Shield, X, RefreshCw, ClipboardList, Trash2, Zap, Target, Palette, Rocket,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { UserRole } from "@/types";
@@ -40,6 +40,7 @@ const navItems: NavItem[] = [
   { label: "Settings",        href: "/settings",        icon: Settings,        roles: ["OWNER", "ADMIN"] },
   { label: "Branding",        href: "/settings/branding", icon: Palette,       roles: ["OWNER"] },
   { label: "Notifications",   href: "/settings/notifications", icon: Bell,     roles: ["OWNER", "ADMIN", "MANAGER", "STAFF"] },
+  { label: "Go Live",         href: "/go-live",                icon: Rocket,   roles: ["OWNER", "ADMIN"] },
 ];
 
 const navGroups = [
@@ -48,6 +49,7 @@ const navGroups = [
   { label: "Management",  keys: ["Recipes", "Locations", "Alerts", "Stocktake", "Wastage", "Par Levels", "Reorder", "Reports"] },
   { label: "Admin",       keys: ["Audit Log", "Team", "Settings", "Branding"] },
   { label: "Account",     keys: ["Notifications"] },
+  { label: "Setup",       keys: ["Go Live"] },
 ];
 
 interface SidebarProps {
