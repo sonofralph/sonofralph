@@ -16,8 +16,9 @@ hotels, restaurants, bars, cafés, catering companies, and clinics.
 speed, security, and operational clarity. Primary selling points: security-first architecture,
 frictionless onboarding, and intuitive navigation for low-tech users.
 
-**Parent company strategy (V3):** Mise will be one product under a larger Solution providing
-company with its own standalone website, enabling multiple industry solutions under one umbrella.
+**Operating context:** We are co-founders building this to scale. Every decision is made with the lens of fast, compounding traction — not just shipping features. Speed of learning and speed of distribution matter as much as speed of code.
+
+**Parent company strategy (IN DESIGN):** Mise is the first product under a parent Solutions company that will serve multiple industry verticals under one umbrella brand. Parent company strategy is being designed in parallel — see "Parent Company" section.
 
 **Live URL:** https://mise-alpha-rose.vercel.app
 **Repo:** sonofralph/sonofralph
@@ -222,10 +223,10 @@ Run migrations in the `mise` project SQL editor, never the other one.
 - SSO (SAML/OAuth for enterprise)
 - Advanced reporting (cost of goods, wastage trends)
 
-### V3 — Platform & Parent Company (FUTURE)
-- Mise becomes one product under a parent Solution company
+### V3 — Platform & Parent Company (IN DESIGN — see "Parent Company" section below)
+- Mise becomes one product under a parent Solutions company
 - Parent company standalone website
-- Multiple industry verticals (retail, healthcare, education)
+- Multiple industry verticals (retail, healthcare, education, logistics)
 - Marketplace for integrations
 - Partner/reseller programme
 
@@ -255,6 +256,47 @@ The gap is not features — it's awareness and trust.
 The 30→70% move is entirely a GTM execution problem, not a build problem.
 
 **ACTION: Deliver full detailed GTM playbook once V1.1 + Sentry are complete. Covers: ICP, primary channel, positioning, first 10 customers, partnership targets, SEO/content, pricing page conversion. Goal: 30–40% → 70%+ success probability.**
+
+---
+
+## Infrastructure Costs (Reference)
+
+Fixed monthly cost before first customer: **~$45–50/mo**
+
+| Service | Free Tier Limit | Paid | When to Upgrade |
+|---------|----------------|------|-----------------|
+| Vercel | 100 deploys/day | $20/mo (Pro) | Before launch |
+| Supabase | 500MB, pauses after 7d inactivity | $25/mo (Pro) | Before launch |
+| Stripe | No monthly fee | 2.9% + 30¢/transaction | Live mode at launch |
+| Resend | 3,000 emails/mo | $20/mo | When volume grows |
+| Sentry | Generous free tier | $26/mo (Team) | Post-launch traction |
+| Upstash Redis | Not yet added | ~$0–10/mo | When scaling rate limiting |
+
+**Supabase free tier caveat:** Project pauses after 7 days of no DB activity — catastrophic in production. Must upgrade before any real users.
+
+---
+
+## Parent Company (IN DESIGN)
+
+Mise is Product 1 under a parent Solutions company that will own multiple vertical SaaS products.
+
+### What We Know
+- Parent company needs its own brand identity, domain, and website
+- Mise sits under it as a standalone product with its own brand
+- Future products target other verticals (retail ops, clinic management, logistics, education)
+- Entity name currently: **Azurion Global Corporation** — needs a decision: keep or rename for parent brand
+
+### Open Questions (to resolve)
+1. **Parent company name** — what is it called? Should it reflect "solutions", "systems", "operations"?
+2. **Parent brand vs product brands** — does parent brand show publicly or stay holding-company invisible?
+3. **Website structure** — parentco.com with Mise as mise.app? Or mise.app standalone and parentco in background?
+4. **Which vertical is Product 2?** — retail, clinics, logistics, or education first?
+5. **Legal entity** — is Azurion the parent or does Azurion become Mise and a new entity is the parent?
+
+### Design Principles (agreed)
+- Mise must be able to stand alone as a brand — it does not need the parent to sell
+- Parent gives credibility, investor story, and multi-product scale narrative
+- Parent website positions the company as a "vertical SaaS studio" — not just one product
 
 ---
 
