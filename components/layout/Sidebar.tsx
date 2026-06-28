@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import {
   LayoutDashboard, Package, ArrowLeftRight, ShoppingCart,
   Truck, MapPin, Bell, BarChart3, Settings, Users, ChefHat,
-  UtensilsCrossed, Shield, X, RefreshCw, ClipboardList, Trash2, Zap, Target, Palette, Rocket, Layers,
+  UtensilsCrossed, Shield, X, RefreshCw, ClipboardList, Trash2, Zap, Target, Palette, Rocket, Building2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { UserRole } from "@/types";
@@ -35,7 +35,7 @@ const navItems: NavItem[] = [
   { label: "Par Levels",      href: "/par-levels",      icon: Target,          roles: ["OWNER", "ADMIN", "MANAGER"] },
   { label: "Reorder",         href: "/reorder",         icon: RefreshCw,       roles: ["OWNER", "ADMIN", "MANAGER"] },
   { label: "Reports",         href: "/reports",         icon: BarChart3,       roles: ["OWNER", "ADMIN", "MANAGER"] },
-  { label: "Departments",      href: "/departments",      icon: Layers,          roles: ["OWNER", "ADMIN"] },
+  { label: "Departments",      href: "/departments",      icon: Building2,       roles: ["OWNER", "ADMIN"] },
   { label: "Audit Log",       href: "/audit",           icon: Shield,          roles: ["OWNER", "ADMIN"] },
   { label: "Team",            href: "/settings/team",   icon: Users,           roles: ["OWNER", "ADMIN"] },
   { label: "Settings",        href: "/settings",        icon: Settings,        roles: ["OWNER", "ADMIN"] },

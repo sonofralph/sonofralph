@@ -3,7 +3,7 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import { SessionUser } from "@/types";
-import { Layers } from "lucide-react";
+import { Building2 } from "lucide-react";
 import { DepartmentsClient } from "./DepartmentsClient";
 
 export default async function DepartmentsPage() {
@@ -42,7 +42,7 @@ export default async function DepartmentsPage() {
 
       {departments.length === 0 && locations.length === 0 ? (
         <div className="rounded-xl border border-dashed border-slate-200 p-12 text-center">
-          <Layers className="mx-auto h-8 w-8 text-slate-300 mb-3" />
+          <Building2 className="mx-auto h-8 w-8 text-slate-300 mb-3" />
           <p className="text-slate-500">No locations yet</p>
           <p className="text-sm text-slate-400">Add locations first, then organise them into departments.</p>
         </div>
