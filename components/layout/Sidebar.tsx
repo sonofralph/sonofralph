@@ -39,6 +39,7 @@ const navItems: NavItem[] = [
   { label: "Team",            href: "/settings/team",   icon: Users,           roles: ["OWNER", "ADMIN"] },
   { label: "Settings",        href: "/settings",        icon: Settings,        roles: ["OWNER", "ADMIN"] },
   { label: "Branding",        href: "/settings/branding", icon: Palette,       roles: ["OWNER"] },
+  { label: "Notifications",   href: "/settings/notifications", icon: Bell,     roles: ["OWNER", "ADMIN", "MANAGER", "STAFF"] },
 ];
 
 const navGroups = [
@@ -46,6 +47,7 @@ const navGroups = [
   { label: "Procurement", keys: ["Purchase Orders", "Suppliers"] },
   { label: "Management",  keys: ["Recipes", "Locations", "Alerts", "Stocktake", "Wastage", "Par Levels", "Reorder", "Reports"] },
   { label: "Admin",       keys: ["Audit Log", "Team", "Settings", "Branding"] },
+  { label: "Account",     keys: ["Notifications"] },
 ];
 
 interface SidebarProps {

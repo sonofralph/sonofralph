@@ -13,7 +13,7 @@ export function DigestButton() {
     setLoading(true);
     setError("");
     try {
-      const res = await fetch("/api/digest", { method: "POST" });
+      const res = await fetch("/api/digest", { method: "GET" });
       if (!res.ok) {
         const d = await res.json();
         setError(d.error ?? "Failed");

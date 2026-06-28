@@ -1,10 +1,98 @@
 import { NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { sendWeeklyDigest } from "@/lib/email";
+import { SessionUser } from "@/types";
 
-// Secured with CRON_SECRET — call via:
-// POST /api/digest  { Authorization: Bearer <CRON_SECRET> }
-// or GET for manual trigger from settings (session-checked below)
+// Manual trigger from the settings UI — session-authenticated, runs for one org only
+export async function GET() {
+  const session = await getServerSession(authOptions);
+  if (!session?.user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  const user = session.user as SessionUser;
+  if (!["OWNER", "ADMIN"].includes(user.role)) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
+
+  const appUrl = process.env.NEXTAUTH_URL ?? "http://localhost:3001";
+  const sevenDaysAgo = new Date();
+  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+
+  const org = await prisma.organization.findUnique({
+    where: { id: user.organizationId },
+    include: {
+      users: {
+        where: { role: { in: ["OWNER", "ADMIN"] } },
+        select: { email: true, notificationPreferences: { where: { alertType: "LOW_STOCK" } } },
+      },
+    },
+  });
+
+  if (!org) return NextResponse.json({ error: "Organization not found" }, { status: 404 });
+
+  const recipients = org.users
+    .filter((u) => {
+      const pref = u.notificationPreferences[0];
+      return pref ? pref.email : true;
+    })
+    .map((u) => u.email);
+
+  if (recipients.length === 0) {
+    return NextResponse.json({ ok: true, message: "No eligible recipients" });
+  }
+
+  const [totalItems, lowStockCount, pendingPOs, weekMovements, wastageMovements] =
+    await Promise.all([
+      prisma.item.count({ where: { organizationId: org.id } }),
+      prisma.$queryRaw<[{ count: bigint }]>`
+        SELECT COUNT(*) FROM "InventoryRecord" ir
+        JOIN "Item" i ON ir."itemId" = i.id
+        WHERE i."organizationId" = ${org.id}
+        AND ir.quantity <= ir."reorderPoint"
+      `.then((r) => Number(r[0].count)),
+      prisma.purchaseOrder.count({
+        where: { organizationId: org.id, status: { in: ["DRAFT", "SENT", "PARTIAL"] } },
+      }),
+      prisma.stockMovement.findMany({
+        where: { item: { organizationId: org.id }, createdAt: { gte: sevenDaysAgo } },
+        select: { type: true, quantity: true },
+      }),
+      prisma.stockMovement.findMany({
+        where: { item: { organizationId: org.id }, type: "WASTAGE", createdAt: { gte: sevenDaysAgo } },
+        include: { item: { select: { name: true, unit: true, unitCost: true } } },
+      }),
+    ]);
+
+  const weekReceipts = weekMovements.filter((m) => m.type === "RECEIPT").reduce((s, m) => s + m.quantity, 0);
+  const weekIssues = weekMovements.filter((m) => m.type === "ISSUE").reduce((s, m) => s + m.quantity, 0);
+  const weekWastageValue = wastageMovements.reduce((s, m) => s + m.quantity * m.item.unitCost, 0);
+
+  const wastedByItem: Record<string, { name: string; qty: number; unit: string }> = {};
+  for (const m of wastageMovements) {
+    if (!wastedByItem[m.itemId]) wastedByItem[m.itemId] = { name: m.item.name, qty: 0, unit: m.item.unit };
+    wastedByItem[m.itemId].qty += m.quantity;
+  }
+  const topWasted = Object.values(wastedByItem).sort((a, b) => b.qty - a.qty).slice(0, 5);
+
+  await sendWeeklyDigest({
+    to: recipients,
+    orgName: org.name,
+    totalItems,
+    lowStockCount,
+    weekReceipts,
+    weekIssues,
+    weekWastageValue,
+    pendingPOs,
+    topWasted,
+    appUrl,
+  });
+
+  return NextResponse.json({ ok: true, sent: recipients.length });
+}
+
+// Cron job trigger — secured with CRON_SECRET, runs for all organizations
+// POST /api/digest   Authorization: Bearer <CRON_SECRET>
 export async function POST(req: Request) {
   const auth = req.headers.get("authorization");
   const secret = process.env.CRON_SECRET;

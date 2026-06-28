@@ -1,7 +1,7 @@
 "use client";
 
 import { usePathname, useRouter } from "next/navigation";
-import { Bell, LogOut, User, ChevronRight, AlertTriangle, Package, Menu } from "lucide-react";
+import { Bell, LogOut, User, ChevronRight, AlertTriangle, Package, Menu, BellRing } from "lucide-react";
 import { GlobalSearch } from "@/components/GlobalSearch";
 import { signOut } from "next-auth/react";
 import { Button } from "@/components/ui/button";
@@ -210,6 +210,10 @@ export function Header({ user, alertCount = 0, alerts = [], onMenuToggle }: Head
             <DropdownMenuItem onClick={() => router.push("/settings/profile")}>
               <User className="mr-2 h-4 w-4" />
               Your Profile
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => router.push("/settings/notifications")}>
+              <BellRing className="mr-2 h-4 w-4" />
+              Notifications
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem
