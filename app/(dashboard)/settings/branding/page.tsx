@@ -15,7 +15,7 @@ export default async function BrandingPage() {
 
   const org = await prisma.organization.findUnique({
     where: { id: user.organizationId },
-    select: { logoUrl: true, brandColor: true },
+    select: { logoUrl: true, brandColor: true, showOnPublicWall: true },
   });
 
   return (
@@ -34,6 +34,7 @@ export default async function BrandingPage() {
         <BrandingForm
           initialLogoUrl={org?.logoUrl ?? null}
           initialBrandColor={org?.brandColor ?? null}
+          initialShowOnPublicWall={org?.showOnPublicWall ?? false}
         />
       </div>
     </div>

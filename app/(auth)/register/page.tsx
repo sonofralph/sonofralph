@@ -66,10 +66,12 @@ export default function RegisterPage() {
     <div className="flex min-h-full items-center justify-center bg-gradient-to-br from-slate-50 to-indigo-50 p-4">
       <div className="w-full max-w-md space-y-6">
         <div className="flex flex-col items-center gap-2 text-center">
-          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-600 shadow-lg">
-            <ChefHat className="h-6 w-6 text-white" />
-          </div>
-          <h1 className="text-2xl font-bold text-slate-900">Mise</h1>
+          <Link href="/" className="flex flex-col items-center gap-2">
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-600 shadow-lg">
+              <ChefHat className="h-6 w-6 text-white" />
+            </div>
+            <h1 className="text-2xl font-bold text-slate-900">Mise</h1>
+          </Link>
           <p className="text-sm text-slate-500">Create your organization</p>
         </div>
 

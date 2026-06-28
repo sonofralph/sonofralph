@@ -9,6 +9,7 @@ const schema = z.object({
   name: z.string().min(1).max(100).optional(),
   logoUrl: z.string().url().max(500).nullable().optional(),
   brandColor: z.string().regex(/^#[0-9a-fA-F]{6}$/).nullable().optional(),
+  showOnPublicWall: z.boolean().optional(),
 });
 
 export async function GET() {
@@ -36,11 +37,12 @@ export async function PATCH(req: Request) {
   if (parsed.data.name !== undefined) data.name = parsed.data.name;
   if (parsed.data.logoUrl !== undefined) data.logoUrl = parsed.data.logoUrl;
   if (parsed.data.brandColor !== undefined) data.brandColor = parsed.data.brandColor;
+  if (parsed.data.showOnPublicWall !== undefined) data.showOnPublicWall = parsed.data.showOnPublicWall;
 
   const org = await prisma.organization.update({
     where: { id: user.organizationId },
     data,
-    select: { id: true, name: true, logoUrl: true, brandColor: true },
+    select: { id: true, name: true, logoUrl: true, brandColor: true, showOnPublicWall: true },
   });
 
   return NextResponse.json(org);

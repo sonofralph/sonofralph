@@ -17,6 +17,7 @@ model Organization {
   orgSize              String?
   logoUrl              String?
   brandColor           String?
+  showOnPublicWall     Boolean   @default(false)
   stripeCustomerId     String?
   stripeSubscriptionId String?
   trialEndsAt          DateTime?

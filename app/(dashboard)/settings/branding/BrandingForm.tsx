@@ -22,11 +22,13 @@ const PRESET_COLORS = [
 interface Props {
   initialLogoUrl: string | null;
   initialBrandColor: string | null;
+  initialShowOnPublicWall: boolean;
 }
 
-export function BrandingForm({ initialLogoUrl, initialBrandColor }: Props) {
+export function BrandingForm({ initialLogoUrl, initialBrandColor, initialShowOnPublicWall }: Props) {
   const [logoUrl, setLogoUrl] = useState(initialLogoUrl ?? "");
   const [brandColor, setBrandColor] = useState(initialBrandColor ?? "#4f46e5");
+  const [showOnPublicWall, setShowOnPublicWall] = useState(initialShowOnPublicWall);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState("");
@@ -41,6 +43,7 @@ export function BrandingForm({ initialLogoUrl, initialBrandColor }: Props) {
         body: JSON.stringify({
           logoUrl: logoUrl.trim() || null,
           brandColor,
+          showOnPublicWall,
         }),
       });
       const data = await res.json();
@@ -127,6 +130,25 @@ export function BrandingForm({ initialLogoUrl, initialBrandColor }: Props) {
             Primary Button
           </button>
         </div>
+      </div>
+
+      {/* Public wall opt-in */}
+      <div className="space-y-2">
+        <div className="flex items-center gap-2">
+          <Label className="text-sm font-semibold text-slate-700">Show on public "Trusted by" wall</Label>
+        </div>
+        <p className="text-xs text-slate-400">Display your organisation name on the Mise homepage to show your support</p>
+        <label className="flex items-center gap-3 cursor-pointer w-fit">
+          <div
+            onClick={() => setShowOnPublicWall((v) => !v)}
+            className={`relative h-5 w-9 rounded-full transition-colors ${showOnPublicWall ? "bg-indigo-600" : "bg-slate-200"}`}
+          >
+            <span
+              className={`absolute top-0.5 left-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform ${showOnPublicWall ? "translate-x-4" : "translate-x-0"}`}
+            />
+          </div>
+          <span className="text-sm text-slate-600">{showOnPublicWall ? "Listed" : "Hidden"}</span>
+        </label>
       </div>
 
       <div className="flex items-center gap-3">

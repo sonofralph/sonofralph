@@ -139,6 +139,46 @@ function Preloader({ onDone }: { onDone: () => void }) {
   );
 }
 
+// ─── Hero rotating tagline ────────────────────────────────────────────────────
+
+const HERO_PHRASES = [
+  "as fast as your service",
+  "without the spreadsheets",
+  "across every location",
+  "with zero surprises",
+  "so nothing runs out",
+];
+
+function RotatingText() {
+  const [idx, setIdx] = useState(0);
+  const [entering, setEntering] = useState(true);
+
+  useEffect(() => {
+    const cycle = setInterval(() => {
+      setEntering(false);
+      setTimeout(() => {
+        setIdx((i) => (i + 1) % HERO_PHRASES.length);
+        setEntering(true);
+      }, 320);
+    }, 2800);
+    return () => clearInterval(cycle);
+  }, []);
+
+  return (
+    <span
+      className="text-indigo-600"
+      style={{
+        display: "inline-block",
+        opacity: entering ? 1 : 0,
+        transform: entering ? "translateY(0)" : "translateY(-10px)",
+        transition: "opacity 0.32s ease-out, transform 0.32s ease-out",
+      }}
+    >
+      {HERO_PHRASES[idx]}
+    </span>
+  );
+}
+
 // ─── Scroll-reveal wrapper ────────────────────────────────────────────────────
 
 function Reveal({
@@ -186,7 +226,9 @@ function Reveal({
 
 // ─── Main page ────────────────────────────────────────────────────────────────
 
-export default function LandingPageClient() {
+const PLACEHOLDER_ORGS = ["Grand Palace Hotel", "Bistro Collective", "Cloud Kitchen Co.", "Harbor Catering", "The Vine Group"];
+
+export default function LandingPageClient({ trustedOrgs = [] }: { trustedOrgs?: string[] }) {
   const [lang, setLangState] = useState<Language>("en");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [preloaderDone, setPreloaderDone] = useState(false);
@@ -312,7 +354,7 @@ export default function LandingPageClient() {
               <h1 className="mb-6 text-4xl font-extrabold leading-tight tracking-tight text-slate-900 sm:text-5xl md:text-6xl">
                 {t.hero.h1Line1}
                 <br />
-                <span className="text-indigo-600">{t.hero.h1Line2}</span>
+                <RotatingText />
               </h1>
             </div>
             <div style={heroStyle(230)}>
@@ -381,11 +423,31 @@ export default function LandingPageClient() {
         <section className="border-y border-slate-100 bg-slate-50 py-10">
           <Reveal className="mx-auto max-w-4xl px-6 text-center">
             <p className="mb-6 text-xs font-semibold uppercase tracking-widest text-slate-400">{t.social.trusted}</p>
-            <div className="flex flex-wrap items-center justify-center gap-8">
-              {["Grand Palace Hotel", "Bistro Collective", "Cloud Kitchen Co.", "Harbor Catering", "The Vine Group"].map((name) => (
-                <span key={name} className="text-sm font-bold text-slate-300">{name}</span>
-              ))}
-            </div>
+            {(() => {
+              const display = trustedOrgs.length >= 3
+                ? trustedOrgs
+                : [...trustedOrgs, ...PLACEHOLDER_ORGS].slice(0, 5);
+              const doubled = [...display, ...display];
+              return trustedOrgs.length >= 8 ? (
+                <div className="overflow-hidden">
+                  <div
+                    className="flex gap-12 whitespace-nowrap"
+                    style={{ animation: "marquee 22s linear infinite" }}
+                  >
+                    {doubled.map((name, i) => (
+                      <span key={i} className="text-sm font-bold text-slate-300">{name}</span>
+                    ))}
+                  </div>
+                  <style>{`@keyframes marquee { from { transform: translateX(0) } to { transform: translateX(-50%) } }`}</style>
+                </div>
+              ) : (
+                <div className="flex flex-wrap items-center justify-center gap-8">
+                  {display.map((name, i) => (
+                    <span key={i} className="text-sm font-bold text-slate-300">{name}</span>
+                  ))}
+                </div>
+              );
+            })()}
           </Reveal>
         </section>
 

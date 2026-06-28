@@ -32,9 +32,9 @@ Every feature and decision is evaluated through these six lenses in order:
 1. **Business** — revenue impact, market positioning, competitive advantage
 2. **Development & Security** — implementation complexity, security posture, technical debt
 3. **Marketing Expert** — does this move the needle on acquisition, retention, or perception? would a growth marketer fight for this feature?
-4. **Customer / Client / End User** — ease of use, low-tech accessibility, workflow fit
-5. **Product** — does it make the product coherent and complete?
-6. **Investor / Acquirer** — would this make the business more valuable or attractive to acquire?
+4. **User / Client Experience** — ease of use, low-tech accessibility, friction reduction, workflow fit
+5. **Product Expert** — does it make the product coherent, complete, and defensible?
+6. **Investor Interest** — would this make the business more valuable or attractive to acquire?
 
 ---
 
@@ -178,7 +178,38 @@ Run migrations in the `mise` project SQL editor, never the other one.
 - [x] Email delivery via Resend — invite emails + alert rebrand to Mise
 - [x] Pagination on large list views — movements (50/page), audit (100/page)
 - [x] GDPR — data export (`GET /api/gdpr/export`) and account deletion (`POST /api/gdpr/delete`)
-- [ ] Sentry error tracking ← NEXT
+- [x] Sentry error tracking
+
+### V1.2 — Growth & Visibility (IN PROGRESS)
+- [x] Clickable logo on login/register → homepage
+- [x] Hero rotating text animation (cycles through 5 hospitality value phrases every 2.8s)
+- [x] "Trusted by" social wall — real org data via `showOnPublicWall` flag; opt-in toggle in `/settings/branding`; marquee at 8+ orgs
+- [x] Internal admin dashboard at `/admin` — plan/status/biztype/size breakdown, MRR, top features, recent signups
+- **DB migration required** — run in Supabase SQL editor:
+  ```sql
+  ALTER TABLE "Organization" ADD COLUMN IF NOT EXISTS "showOnPublicWall" BOOLEAN NOT NULL DEFAULT false;
+  ```
+- **Set `ADMIN_EMAILS` env var** in Vercel — comma-separated email addresses that can access `/admin`
+
+### Pre-Launch Sprint — MUST COMPLETE BEFORE LIVE PAYMENTS 🔴
+- [ ] ICO registration (ico.org.uk — £40/yr, legally required in UK)
+- [ ] Terms of Service (generate baseline + solicitor review)
+- [ ] Privacy Policy (generate baseline + solicitor review)
+- [ ] Data Processing Agreement (DPA) template drafted
+- [ ] Cookie Policy + consent banner (if using Google Analytics)
+- [ ] Business entity sorted (update Azurion → Mise entity in Stripe + legal docs)
+- [ ] Stripe → live mode (new keys, new webhook secret, new price ID)
+- [ ] Custom domain live + NEXTAUTH_URL updated in Vercel
+- [ ] Resend domain verified (DKIM, SPF, DMARC DNS records)
+- [ ] RESEND_API_KEY set in Vercel
+- [ ] Sentry env vars set in Vercel (SENTRY_DSN, NEXT_PUBLIC_SENTRY_DSN, SENTRY_AUTH_TOKEN, SENTRY_ORG, SENTRY_PROJECT)
+- [ ] Supabase → Pro plan (daily backups, PITR, no pausing)
+- [ ] Security headers added to next.config.ts
+- [ ] Status page live (Instatus free tier)
+- [ ] Support email inbox active (support@mise.app or hello@mise.app)
+- [ ] LICENSE entity name updated from Azurion to Mise entity
+- [ ] ToS + Privacy Policy links in footer of /pricing and /register
+- [ ] GTM Playbook updated with final location + launch details
 
 ### V2 — Intelligence & Scale (PLANNED)
 - AI-assisted demand forecasting

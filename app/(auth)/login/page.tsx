@@ -49,12 +49,12 @@ export default function LoginPage() {
         </div>
 
         <div className="relative">
-          <div className="flex items-center gap-3">
+          <Link href="/" className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/20 backdrop-blur">
               <ChefHat className="h-5 w-5 text-white" />
             </div>
             <span className="text-xl font-bold text-white">Mise</span>
-          </div>
+          </Link>
         </div>
 
         <div className="relative space-y-8">
@@ -105,12 +105,12 @@ export default function LoginPage() {
       <div className="flex w-full lg:w-1/2 flex-col items-center justify-center px-8 py-12">
         <div className="w-full max-w-sm space-y-8">
           {/* Mobile logo */}
-          <div className="flex flex-col items-center gap-2 lg:hidden">
+          <Link href="/" className="flex flex-col items-center gap-2 lg:hidden">
             <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-600 shadow-lg">
               <ChefHat className="h-6 w-6 text-white" />
             </div>
             <h1 className="text-xl font-bold text-slate-900">Mise</h1>
-          </div>
+          </Link>
 
           <div>
             <h2 className="text-2xl font-bold text-slate-900">Welcome back</h2>
