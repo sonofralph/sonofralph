@@ -9,6 +9,7 @@ import { formatCurrency, formatDate } from "@/lib/utils";
 import { ArrowLeft, Building2, Calendar, Package, Printer } from "lucide-react";
 import Link from "next/link";
 import { ReceivePOForm } from "./ReceivePOForm";
+import { CommentsThread } from "@/components/ui/CommentsThread";
 import { cn } from "@/lib/utils";
 
 const statusColors: Record<string, string> = {
@@ -27,15 +28,22 @@ export default async function PODetailPage({ params }: { params: Promise<{ id: s
   const user = session.user as SessionUser;
   const canReceive = ["OWNER", "ADMIN", "MANAGER"].includes(user.role);
 
-  const po = await prisma.purchaseOrder.findFirst({
-    where: { id, organizationId: user.organizationId },
-    include: {
-      supplier: true,
-      lines: {
-        include: { item: { select: { id: true, name: true, sku: true, unit: true } } },
+  const [po, comments] = await Promise.all([
+    prisma.purchaseOrder.findFirst({
+      where: { id, organizationId: user.organizationId },
+      include: {
+        supplier: true,
+        lines: {
+          include: { item: { select: { id: true, name: true, sku: true, unit: true } } },
+        },
       },
-    },
-  });
+    }),
+    prisma.comment.findMany({
+      where: { organizationId: user.organizationId, entityType: "PURCHASE_ORDER", entityId: id },
+      orderBy: { createdAt: "asc" },
+      include: { user: { select: { id: true, name: true, email: true } } },
+    }),
+  ]);
 
   if (!po) notFound();
 
@@ -136,6 +144,21 @@ export default async function PODetailPage({ params }: { params: Promise<{ id: s
           <p className="text-sm text-slate-700">{po.notes}</p>
         </CardContent></Card>
       )}
+
+      <Card>
+        <CardContent className="p-5">
+          <CommentsThread
+            entityType="PURCHASE_ORDER"
+            entityId={po.id}
+            initialComments={comments.map((c) => ({
+              ...c,
+              createdAt: c.createdAt.toISOString(),
+            }))}
+            currentUserId={user.id}
+            currentUserName={user.name}
+          />
+        </CardContent>
+      </Card>
     </div>
   );
 }

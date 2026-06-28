@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { SessionUser } from "@/types";
 import { NewRequisitionDialog } from "./NewRequisitionDialog";
 import { ReviewDialog } from "./ReviewDialog";
+import { CommentsThread } from "@/components/ui/CommentsThread";
 import { formatDate } from "@/lib/utils";
 
 interface RequisitionLine {
@@ -148,6 +149,14 @@ export function RequisitionClient({
                   {req.reviewedBy && (
                     <p className="text-xs text-slate-400">Reviewed by {req.reviewedBy.name ?? req.reviewedBy.email}</p>
                   )}
+                  <div className="pt-2 border-t border-slate-100">
+                    <CommentsThread
+                      entityType="REQUISITION"
+                      entityId={req.id}
+                      currentUserId={user.id}
+                      currentUserName={user.name}
+                    />
+                  </div>
                 </div>
               )}
             </div>

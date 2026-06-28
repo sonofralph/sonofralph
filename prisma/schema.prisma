@@ -29,6 +29,7 @@ model Organization {
   auditLogs      AuditLog[]
   requisitions   Requisition[]
   shiftHandovers ShiftHandover[]
+  comments       Comment[]
 }
 
 model User {
@@ -49,6 +50,7 @@ model User {
   requisitionsRequested     Requisition[]             @relation("RequisitionRequester")
   requisitionsReviewed      Requisition[]             @relation("RequisitionReviewer")
   shiftHandovers            ShiftHandover[]
+  comments                  Comment[]
 }
 
 model NotificationPreference {
@@ -294,4 +296,19 @@ model AuditLog {
   organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   user         User         @relation(fields: [userId], references: [id])
   item         Item?        @relation(fields: [itemId], references: [id])
+}
+
+model Comment {
+  id             String   @id @default(cuid())
+  organizationId String
+  userId         String
+  entityType     String
+  entityId       String
+  body           String
+  createdAt      DateTime @default(now())
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  user         User         @relation(fields: [userId], references: [id])
+
+  @@index([entityType, entityId])
 }
