@@ -12,9 +12,9 @@ import { Button } from "@/components/ui/button";
 import { Loader2, Zap } from "lucide-react";
 
 const RESOURCE_COPY: Record<string, { noun: string; proUnlock: string }> = {
-  locations: { noun: "location", proUnlock: "up to 5 locations" },
+  locations: { noun: "location", proUnlock: "up to 5 locations across your operation" },
   users: { noun: "team member", proUnlock: "up to 20 team members" },
-  items: { noun: "item", proUnlock: "unlimited items" },
+  items: { noun: "item", proUnlock: "unlimited inventory items" },
 };
 
 interface Props {
@@ -56,14 +56,14 @@ export function UpgradeModal({ open, onClose, resource, current, limit }: Props)
 
         <div className="space-y-3 text-sm text-slate-600">
           <p>
-            You&apos;ve reached the <strong>Free plan limit</strong> of {limit}{" "}
-            {copy.noun}{limit !== 1 ? "s" : ""} ({current}/{limit} used).
+            Your organisation is on the <strong>Free plan</strong>, which includes{" "}
+            {limit} {copy.noun}{limit !== 1 ? "s" : ""}.
           </p>
           <p>
             Upgrade to <strong>Mise Pro</strong> to unlock {copy.proUnlock},
-            priority support, and everything your growing operation needs —
+            up to 20 team members, and unlimited inventory items —
             starting at <strong>$49/month</strong> with a{" "}
-            <strong>14-day free trial</strong>.
+            <strong>14-day free trial, no card needed upfront</strong>.
           </p>
           {error && <p className="text-red-600 text-xs">{error}</p>}
         </div>
