@@ -20,31 +20,36 @@ export async function POST() {
   });
   if (!org) return NextResponse.json({ error: "Organization not found" }, { status: 404 });
 
-  let customerId = org.stripeCustomerId;
-  if (!customerId) {
-    const customer = await stripe.customers.create({
-      name: org.name,
-      email: user.email,
-      metadata: { organizationId: user.organizationId },
+  try {
+    let customerId = org.stripeCustomerId;
+    if (!customerId) {
+      const customer = await stripe.customers.create({
+        name: org.name,
+        email: user.email,
+        metadata: { organizationId: user.organizationId },
+      });
+      customerId = customer.id;
+      await prisma.organization.update({
+        where: { id: user.organizationId },
+        data: { stripeCustomerId: customerId },
+      });
+    }
+
+    const checkoutSession = await stripe.checkout.sessions.create({
+      customer: customerId,
+      mode: "subscription",
+      line_items: [{ price: STRIPE_PRICES.PRO_MONTHLY, quantity: 1 }],
+      subscription_data: {
+        trial_period_days: 14,
+        metadata: { organizationId: user.organizationId },
+      },
+      success_url: `${process.env.NEXTAUTH_URL}/dashboard?subscribed=1`,
+      cancel_url: `${process.env.NEXTAUTH_URL}/dashboard?cancelled=1`,
     });
-    customerId = customer.id;
-    await prisma.organization.update({
-      where: { id: user.organizationId },
-      data: { stripeCustomerId: customerId },
-    });
+
+    return NextResponse.json({ url: checkoutSession.url });
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : "Stripe error";
+    return NextResponse.json({ error: message }, { status: 500 });
   }
-
-  const checkoutSession = await stripe.checkout.sessions.create({
-    customer: customerId,
-    mode: "subscription",
-    line_items: [{ price: STRIPE_PRICES.PRO_MONTHLY, quantity: 1 }],
-    subscription_data: {
-      trial_period_days: 14,
-      metadata: { organizationId: user.organizationId },
-    },
-    success_url: `${process.env.NEXTAUTH_URL}/settings/billing?success=1`,
-    cancel_url: `${process.env.NEXTAUTH_URL}/settings/billing?cancelled=1`,
-  });
-
-  return NextResponse.json({ url: checkoutSession.url });
 }

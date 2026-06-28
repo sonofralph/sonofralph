@@ -209,12 +209,17 @@ export function OnboardingWizard({ orgName, hasLocations, hasItems, savedOrgSize
   async function redirectAfterOnboarding() {
     if (orgSize === "GROWING") {
       setLoading(true);
+      setError("");
       const res = await fetch("/api/stripe/checkout", { method: "POST" });
       if (res.ok) {
         const { url } = await res.json();
         window.location.href = url;
         return;
       }
+      const data = await res.json().catch(() => ({}));
+      setError(data.error ?? "Failed to start checkout — please try again");
+      setLoading(false);
+      return;
     }
     router.push("/go-live");
   }
