@@ -15,25 +15,46 @@ import {
   Warehouse,
   Calendar,
   MapPin,
+  ClipboardList,
+  RefreshCw,
+  Package,
+  Shield,
+  Users,
 } from "lucide-react";
 import type { LocationType } from "@/types";
 
-const locationIcons: Record<LocationType, React.ElementType> = {
+const locationIcons: Partial<Record<LocationType, React.ElementType>> = {
   HOTEL: Hotel,
   RESTAURANT: UtensilsCrossed,
   BAR: Wine,
   KITCHEN: ChefHat,
   WAREHOUSE: Warehouse,
   EVENT_SPACE: Calendar,
+  HOUSEKEEPING: ClipboardList,
+  LAUNDRY: RefreshCw,
+  CELLAR: Wine,
+  STORAGE: Package,
+  FREEZER: Package,
+  PHARMACY: Shield,
+  WARD: Users,
+  OTHER: MapPin,
 };
 
-const locationColors: Record<LocationType, string> = {
+const locationColors: Partial<Record<LocationType, string>> = {
   HOTEL: "bg-blue-50 text-blue-600",
   RESTAURANT: "bg-orange-50 text-orange-600",
   BAR: "bg-purple-50 text-purple-600",
   KITCHEN: "bg-red-50 text-red-600",
   WAREHOUSE: "bg-slate-50 text-slate-600",
   EVENT_SPACE: "bg-green-50 text-green-600",
+  HOUSEKEEPING: "bg-teal-50 text-teal-600",
+  LAUNDRY: "bg-cyan-50 text-cyan-600",
+  CELLAR: "bg-indigo-50 text-indigo-600",
+  STORAGE: "bg-amber-50 text-amber-600",
+  FREEZER: "bg-sky-50 text-sky-600",
+  PHARMACY: "bg-emerald-50 text-emerald-600",
+  WARD: "bg-rose-50 text-rose-600",
+  OTHER: "bg-slate-50 text-slate-600",
 };
 
 export default async function LocationsPage() {
