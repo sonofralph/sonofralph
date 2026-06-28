@@ -110,6 +110,58 @@ ADMIN_EMAILS=you@example.com          # comma-separated, access /admin
 
 ---
 
+## Project Structure
+
+```
+app/
+  (auth)/          # Login, register pages (public)
+  (dashboard)/     # All authenticated app pages — share the dashboard layout
+  admin/           # Internal ops dashboard — guarded by ADMIN_EMAILS env var
+  api/             # API route handlers
+  page.tsx         # Public landing page
+  pricing/         # Public pricing page
+components/
+  ui/              # Primitive UI components (buttons, inputs, etc.)
+  layout/          # Sidebar, header, shell
+  dashboard/       # Dashboard-specific widgets
+  landing/         # Landing page sections
+  inventory/       # Inventory-specific components
+lib/
+  auth.ts          # NextAuth config
+  prisma.ts        # Prisma client singleton
+  plans.ts         # Plan limits + feature gate helpers
+  stripe.ts        # Stripe singleton
+  rate-limit.ts    # Edge rate limiting
+types/
+  index.ts         # SessionUser and shared types
+middleware.ts      # Edge auth guard — runs before every protected route
+prisma/
+  schema.prisma    # Database schema (source of truth)
+  migrations/      # Prisma migration history
+```
+
+> **Adding a new public route?** Add its path prefix to the `matcher` exclusion regex in `middleware.ts` — otherwise unauthenticated users will be redirected to login.
+
+---
+
+## Branch & PR Workflow
+
+- `main` is the deployable branch — Vercel auto-deploys on push
+- Branch off `main` for all changes: `git checkout -b feat/your-feature`
+- PR back to `main`; squash merge preferred to keep history clean
+- Commit style: conventional commits (`feat:`, `fix:`, `chore:`, `refactor:`)
+
+---
+
+## Tests
+
+No automated test suite yet. Before merging:
+1. Run `npm run build` — catches all TypeScript errors (`next dev` does not)
+2. Run `npm run lint`
+3. Manually test the affected flow end-to-end
+
+---
+
 ## Database Schema
 
 | Model | Description |

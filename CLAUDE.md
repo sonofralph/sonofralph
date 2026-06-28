@@ -22,7 +22,7 @@ frictionless onboarding, and intuitive navigation for low-tech users.
 
 **Live URL:** https://mise-alpha-rose.vercel.app
 **Repo:** sonofralph/sonofralph
-**Active branch:** claude/session-01hqwmf6xyidpjzuemja98au-jwxply
+**Active branch:** main
 
 ---
 
@@ -117,6 +117,7 @@ Run migrations in the `mise` project SQL editor, never the other one.
 | `app/(dashboard)/onboarding/OnboardingWizard.tsx` | 5-step onboarding wizard |
 | `app/api/stripe/webhook/route.ts` | Stripe lifecycle webhook handler |
 | `components/layout/Sidebar.tsx` | Nav — role-gated menu items |
+| `middleware.ts` | Edge auth guard — protects all routes except public ones (see matcher exclusions) |
 
 ---
 
