@@ -162,7 +162,7 @@ export function OnboardingWizard({ orgName, hasLocations, hasItems }: Props) {
   }
 
   async function submitItems(skip = false) {
-    if (skip) { router.push("/dashboard"); return; }
+    if (skip) { router.push("/go-live"); return; }
     const valid = items.filter((it) => it.name.trim() && it.sku.trim());
     if (valid.length === 0) { setError("Add at least one item or skip"); return; }
     setLoading(true);
@@ -181,7 +181,7 @@ export function OnboardingWizard({ orgName, hasLocations, hasItems }: Props) {
       }),
     });
     if (!res.ok) { setError((await res.json()).error ?? "Failed"); setLoading(false); return; }
-    router.push("/dashboard");
+    router.push("/go-live");
   }
 
   const steps = [

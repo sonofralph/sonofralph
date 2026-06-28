@@ -39,7 +39,7 @@ export async function PATCH(req: Request) {
   const updateData: Record<string, string | null> = {};
   if (name) updateData.name = name;
   if (jobTitle !== undefined) updateData.jobTitle = jobTitle;
-  if (newPassword) updateData.passwordHash = await bcrypt.hash(newPassword, 12);
+  if (newPassword) updateData.passwordHash = await bcrypt.hash(newPassword, 10);
 
   if (Object.keys(updateData).length === 0) {
     return NextResponse.json({ error: "Nothing to update" }, { status: 400 });

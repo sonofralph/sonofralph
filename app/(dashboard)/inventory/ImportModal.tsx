@@ -141,7 +141,7 @@ export function ImportModal({ open, onClose }: Props) {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = "stockwise-import-sample.csv";
+    a.download = "mise-items-import-sample.csv";
     a.click();
     URL.revokeObjectURL(url);
   }

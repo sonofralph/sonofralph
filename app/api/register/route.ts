@@ -33,7 +33,7 @@ export async function POST(req: Request) {
     });
 
     const finalSlug = existingOrg ? `${slug}-${Date.now()}` : slug;
-    const passwordHash = await bcrypt.hash(data.password, 12);
+    const passwordHash = await bcrypt.hash(data.password, 10);
 
     const org = await prisma.organization.create({
       data: {
