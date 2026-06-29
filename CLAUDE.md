@@ -343,6 +343,20 @@ Mise is Product 1 under a parent Solutions company that will own multiple vertic
 - Manual redeploy available: Vercel dashboard → Deployments → latest → three dots → Redeploy
 
 ### GitHub profile
-- `sonofralph/sonofralph` (profile README repo) was deleted — GitHub profile page is now blank
-- To restore: create new `sonofralph/sonofralph` repo (public, init with README) and add profile content
-- Profile content not yet written — pending user providing: display name, role, social links, vibe
+- `sonofralph/sonofralph` profile README repo recreated (public) with professional profile content
+- Display name: **Nanok** | Role: Founder & Technical Builder
+- Mise listed as plain text (no hyperlink — repo is private, avoids dead links for visitors)
+- Procity referenced as parent brand / vertical SaaS studio
+- Stack badges: Next.js, TypeScript, Tailwind, PostgreSQL, Stripe, Vercel
+- LinkedIn: https://www.linkedin.com/in/ao-nathanael-csc | X: https://x.com/_procity
+
+### Vercel deploy status
+- Project renamed context: Vercel project is `sonofralph-e9vx` — consider renaming to `mise` in Settings → General
+- `.npmrc` with `legacy-peer-deps=true` committed to `sonofralph/mise` (commit `bd756e2`) — fixes Vercel npm install failure
+- Git author email corrected to `akinniyiolatim@yahoo.com` (matches GitHub account) — fixes Vercel "Deployment Blocked" error
+- Vercel free tier daily deploy limit (100/day) hit — resets 24hrs from last attempt. Next deploy should go through clean.
+- "Improve models with this project's data" toggle turned OFF in Vercel project settings
+- When limit resets: go to Vercel dashboard → Deployments → Redeploy latest commit on main
+
+### Pending first task for next session
+Everything is in place. When Vercel limit resets, trigger redeploy from dashboard OR push any commit to main. No code changes needed — just the deploy trigger.
