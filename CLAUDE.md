@@ -21,7 +21,7 @@ frictionless onboarding, and intuitive navigation for low-tech users.
 **Parent company strategy (IN DESIGN):** Mise is the first product under a parent Solutions company that will serve multiple industry verticals under one umbrella brand. Parent company strategy is being designed in parallel — see "Parent Company" section.
 
 **Live URL:** https://mise-alpha-rose.vercel.app
-**Repo:** sonofralph/sonofralph
+**Repo:** sonofralph/mise
 **Active branch:** main
 
 ---
@@ -321,3 +321,28 @@ Mise is Product 1 under a parent Solutions company that will own multiple vertic
 - Stripe Workbench uses a new v2 events UI — it's the same as the old "Add endpoint" flow
 - Test mode is correct for development — don't switch to live mode until pre-launch
 - The Stripe account is under "Azurion Global Corporation" — update to Mise entity before go-live
+
+---
+
+## Session Handover Notes (2026-06-29)
+
+### Repo migration
+- Codebase moved from `sonofralph/sonofralph` → `sonofralph/mise` (private)
+- Local `origin` remote updated: `git remote set-url origin https://github.com/sonofralph/mise.git`
+- Old repo (`sonofralph/sonofralph`) deleted — do not reference it
+- Vercel reconnected to `sonofralph/mise` — auto-deploys on push to `main`
+
+### Local dev setup (Windows — Git Bash)
+- Always install with: `npm install --legacy-peer-deps` — `@sentry/nextjs@9` has a peer dep conflict with Next.js 16, plain `npm install` will ERESOLVE
+- Git identity must be set: `git config --global user.email "nattielexxie@gmail.com"` and `git config --global user.name "sonofralph"`
+- Do not paste multi-line commands in Git Bash — bracketed paste mode adds invisible characters; type or use Shift+Insert
+
+### Vercel
+- Project reconnected to `sonofralph/mise`
+- "Improve models with this project's data" toggle turned OFF in project settings
+- Manual redeploy available: Vercel dashboard → Deployments → latest → three dots → Redeploy
+
+### GitHub profile
+- `sonofralph/sonofralph` (profile README repo) was deleted — GitHub profile page is now blank
+- To restore: create new `sonofralph/sonofralph` repo (public, init with README) and add profile content
+- Profile content not yet written — pending user providing: display name, role, social links, vibe
