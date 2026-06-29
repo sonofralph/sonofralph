@@ -2,7 +2,7 @@
 
 **Founder & Technical Builder**
 
-Building [Mise](https://github.com/sonofralph/mise) — a hospitality inventory and operations platform for hotels, restaurants, bars, cafés, and catering companies. Multi-tenant SaaS, built to scale.
+Building **Mise** — a hospitality inventory and operations platform for hotels, restaurants, bars, cafés, and catering companies. Multi-tenant SaaS, built to scale.
 
 Working on the first product under **Procity** — a vertical SaaS company building focused tools for industries that legacy software has ignored.
 
@@ -12,7 +12,7 @@ Working on the first product under **Procity** — a vertical SaaS company build
 
 | Product | Description | Status |
 |---------|-------------|--------|
-| [Mise](https://github.com/sonofralph/mise) | Hospitality inventory & operations management | Live (Alpha) |
+| Mise | Hospitality inventory & operations management | Live (Alpha) |
 | Procity | Parent brand — vertical SaaS studio | In Design |
 
 ---
